@@ -1,11 +1,15 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+  scrollContainer : {
+    backgroundColor : '#35383f',
+  },
   container :{
     flex : 1,
     alignItems : 'center',
     alignSelf : 'center',
-    paddingTop: 20
+    paddingTop: 20,
+    height: null
   },
   applicationName : {
     color : '#68c6c8',
@@ -20,13 +24,65 @@ export default StyleSheet.create({
     fontWeight : 'bold'
   },
   confirmButton :{
-    width: 200,
-    padding: 5,
-    backgroundColor : '#f00',
+    width: 210,
+    padding: 10,
+    backgroundColor : '#69c8ca',
+    marginTop: 10
+  },
+  confirmButtonText :{
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#fff',
+    fontWeight : 'bold'
   },
   logo : {
     width: 300,
     height: 150,
-    esizeMode : 'stretch'
+    resizeMode : 'cover',
+    margin: 5
+  },
+  enterDimensionsText : {
+    color : '#c9c9c9',
+    fontSize: 18,
+  },
+  unitOfMeasurement : {
+    color : '#c9c9c9',
+    fontSize: 15,
+  },
+  dimensionTextField : {
+    backgroundColor : '#fff',
+    width: 100,
+    height:30,
+    padding: 5,
+    margin: 5,
+    marginTop: 10,
+    paddingLeft: 10,
+  },
+  dimensionsContainer : {
+    alignItems: 'flex-start',
+    flexDirection:'row',
+  },
+  dreamglassgroupText : {
+    color : '#c9c9c9',
+    fontSize : 16,
+    fontWeight: 'bold'
+  },
+  socialIcons : {
+    marginTop: 40,
+  },
+  socialIconsContainer : {
+    flexDirection:'row',
+    alignItems: 'flex-start',
+  },
+  socialIcon : {
+    width: 30,
+    height: 30,
+    resizeMode : 'cover',
+    margin: 5,
+    backgroundColor: 'transparent',
+    borderColor: '#fff',
+    borderWidth: 1,
+    borderRadius: 15,
+    margin: 12
   },
 });
