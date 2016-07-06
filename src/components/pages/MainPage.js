@@ -14,13 +14,11 @@ import {
   TextInput,
   Linking,
   ScrollView,
-  Alert
 } from 'react-native';
-import styles from '../../style/MainPageStyle';
 
-const isNumeric = function(n){
-  return !isNaN(parseFloat(n)) && isFinite(n);
-};
+import styles from '../../style/MainPageStyle';
+import GlassValidationService from '../../services/GlassValidationService';
+import ShowAlertService from '../../services/ShowAlertService';
 
 const LOGO = require('./mainpagelogo.png'),
       SOCIAL_ICONS = {
@@ -38,29 +36,6 @@ const LOGO = require('./mainpagelogo.png'),
         }
       },
       DGG_WEBSITE = 'http://dreamglassgroup.com';
-const glassValidationObject = {
-  widthDivisor : 30,
-  heightDivisor: 30,
-  isGlassDimensionsValid : function(dim){
-      if (!isNumeric(dim.width) || !isNumeric(dim.height))
-        return false;
-      if (dim.width % this.widthDivisor !== 0 || dim.height % this.heightDivisor !== 0)
-        return false;
-      return true;
-  },
-  showValidationError : function(){
-    Alert.alert(
-      'Dimensions are wrong.',
-      `Each glass dimension must be a number. Glass width must be divisible by ${this.widthDivisor} and glass height must be divisible by ${this.heightDivisor}.`,
-      [
-        // alert buttons
-        {
-          text : 'GOT IT!'
-        }
-      ]
-    );
-  }
-};
 
 export default class MainPage extends Component {
   constructor(props){
@@ -141,8 +116,9 @@ export default class MainPage extends Component {
   }
 
   _confirmButtonPress(){
-    if (!glassValidationObject.isGlassDimensionsValid(_self.state.glassDimensions)){
-      glassValidationObject.showValidationError();
+    let validationResult;
+    if ((validationResult = GlassValidationService(this.state.glassDimensions)) !== null){
+      ShowAlertService(validationResult);
       return;
     }
     this.props.navigator.push({
