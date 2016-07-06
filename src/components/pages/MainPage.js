@@ -17,20 +17,19 @@ import {
 } from 'react-native';
 import styles from '../../style/MainPageStyle';
 
-const PAGE_BACKGROUND = require('./img/main-page-bg.jpg'),
-      LOGO = require('./img/main-page-logo.png'),
+const LOGO = require('./mainpagelogo.png'),
       SOCIAL_ICONS = {
         twitter : {
           url : 'http://twitter.com',
-          img : require('./img/twitter.png')
+          img : require('./twitter.png')
         },
         googlePlus : {
           url : 'http://google.com',
-          img : require('./img/googlePlus.png')
+          img : require('./googleplus.png')
         },
         facebook : {
           url : 'http://facebook.com',
-          img : require('./img/facebook.png')
+          img : require('./facebook.png')
         }
       },
       DGG_WEBSITE = 'http://dreamglassgroup.com';
