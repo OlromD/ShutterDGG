@@ -49,14 +49,11 @@ export default class MainPage extends Component {
     return (
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.container}>
-          <Text style={styles.applicationName}>CONVERTICAL HORISONTAL AND VERTICAL</Text>
+          <Text style={styles.applicationCaption}>DYNAMIC</Text>
           <Text style={styles.applicationName}>SHUTTER</Text>
-          <Text style={styles.applicationName}>&</Text>
-          <Text style={styles.applicationName}>CHECKERED PANEL</Text>
-          <Text style={styles.byText}>BY</Text>
           <Image style={styles.logo} source={LOGO}></Image>
           <Text style={styles.enterDimensionsText}>Enter Dimensions</Text>
-          <Text style={styles.unitOfMeasurement}>(in mm)</Text>
+          <Text style={styles.unitOfMeasurement}>(in cm)</Text>
           <View style={styles.dimensionsContainer}>
             <TextInput
               style={styles.dimensionTextField}

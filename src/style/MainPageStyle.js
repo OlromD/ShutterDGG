@@ -8,13 +8,19 @@ export default StyleSheet.create({
     flex : 1,
     alignItems : 'center',
     alignSelf : 'center',
-    paddingTop: 20,
+    paddingTop: 40,
     height: null
   },
   applicationName : {
     color : '#68c6c8',
     marginTop: 5,
-    fontSize : 17,
+    fontSize : 25,
+    fontWeight : 'bold'
+  },
+  applicationCaption : {
+    color : '#68c6c8',
+    marginTop: 5,
+    fontSize : 35,
     fontWeight : 'bold'
   },
   byText : {
