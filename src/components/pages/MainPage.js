@@ -43,8 +43,8 @@ export default class MainPage extends Component {
     _self = this;
     this.state = {
       glassDimensions : {
-        width : '',
-        height: ''
+        width : '30',
+        height: '30'
       }
     };
   }

@@ -4,21 +4,29 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
-  Navigator
+  Navigator,
+  View
 } from 'react-native';
 
 import MainPage from './src/components/pages/MainPage';
 import DesignPage from './src/components/pages/DesignPage';
 
+import ApplicationSideMenu from './src/components/ApplicationSideMenu';
+import styles from './src/style/ApplicationStyle.js';
+
 class App extends Component {
 
   render() {
     return (
-        <Navigator
-          initialRoute={{id : 'MainPage', name : 'Index'}}
-          renderScene={this.renderScene.bind(this)}
-          configureScene={this.configureScene.bind(this)}
-          />
+          <View style={styles.applicationContainer}>
+            <ApplicationSideMenu>
+              <Navigator
+                initialRoute={{id : 'MainPage', name : 'Index'}}
+                renderScene={this.renderScene.bind(this)}
+                configureScene={this.configureScene.bind(this)}
+              />
+            </ApplicationSideMenu>
+          </View>
     );
   }
 
@@ -27,7 +35,7 @@ class App extends Component {
     if (route.sceneConfig){
       return route.sceneConfig
     }
-    return Navigator.SceneConfigs.FloatFromRight;
+    return Navigator.SceneConfigs.FloatFromBottom;
   }
 
   // navigator renderScene function

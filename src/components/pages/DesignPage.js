@@ -8,16 +8,20 @@
 import React, {Component} from 'react';
 import {
   View,
-  Text
+  Text,
+  ToolbarAndroid
 } from 'react-native';
 import styles from '../../style/DesignPageStyle';
 
 export default class DesignPage extends Component {
   render(){
     return (
-      <View>
-        <Text style={styles.caption}>DesignPage Component</Text>
-      </View>
+      <Text>Create a new design!</Text>
     );
+  }
+  onActionSelected( position) {
+    if (position === 0) { // index of 'Settings'
+      showSettings();
+    }
   }
 }
