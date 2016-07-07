@@ -16,7 +16,9 @@ import styles from '../../style/DesignPageStyle';
 export default class DesignPage extends Component {
   render(){
     return (
-      <Text>Create a new design!</Text>
+      <View style={styles.container}>
+        <Text>Create a new design!</Text>
+      </View>
     );
   }
   onActionSelected( position) {

@@ -35,7 +35,7 @@ class App extends Component {
     if (route.sceneConfig){
       return route.sceneConfig
     }
-    return Navigator.SceneConfigs.FloatFromBottom;
+    return Navigator.SceneConfigs.FloatFromBottomAndroid;
   }
 
   // navigator renderScene function
