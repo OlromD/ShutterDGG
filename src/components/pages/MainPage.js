@@ -17,8 +17,9 @@ import {
 } from 'react-native';
 
 import styles from '../../style/MainPageStyle';
-import GlassValidationService from '../../services/GlassValidationService';
-import ShowAlertService from '../../services/ShowAlertService';
+// import GlassValidationService from '../../services/GlassValidationService';
+// import ShowAlertService from '../../services/ShowAlertService';
+import GlassDimensionsPicker from '../GlassDimensionsPicker.js';
 
 const LOGO = require('./mainpagelogo.png'),
       SOCIAL_ICONS = {
@@ -55,27 +56,9 @@ export default class MainPage extends Component {
           <Text style={styles.applicationCaption}>DYNAMIC</Text>
           <Text style={styles.applicationName}>SHUTTER</Text>
           <Image style={styles.logo} source={LOGO}></Image>
-          <Text style={styles.enterDimensionsText}>Enter Dimensions</Text>
+          <Text style={styles.enterDimensionsText}>Choose Dimensions</Text>
           <Text style={styles.unitOfMeasurement}>(in cm)</Text>
-          <View style={styles.dimensionsContainer}>
-            <TextInput
-              style={styles.dimensionTextField}
-              placeholder="Width"
-              value={this.state.glassDimensions.width}
-              onChangeText={value => this.setState(Object.assign(this.state.glassDimensions, {width: value}))}
-              keyboardType="numeric"
-            />
-            <TextInput
-              style={styles.dimensionTextField}
-              placeholder="Height"
-              value={this.state.glassDimensions.height}
-              onChangeText={value => this.setState(Object.assign(this.state.glassDimensions, {height: value}))}
-              keyboardType="numeric"
-            />
-          </View>
-          <TouchableHighlight style={styles.confirmButton} onPress={this._confirmButtonPress.bind(this)}>
-            <Text style={styles.confirmButtonText}>CONFIRM</Text>
-          </TouchableHighlight>
+          <GlassDimensionsPicker />
           <View style={styles.socialIcons}>
             <Text
               style={styles.dreamglassgroupText}

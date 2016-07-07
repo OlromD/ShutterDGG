@@ -55,19 +55,6 @@ export default StyleSheet.create({
     color : '#c9c9c9',
     fontSize: 15,
   },
-  dimensionTextField : {
-    backgroundColor : '#fff',
-    width: 100,
-    height:30,
-    padding: 5,
-    margin: 5,
-    marginTop: 10,
-    paddingLeft: 10,
-  },
-  dimensionsContainer : {
-    alignItems: 'flex-start',
-    flexDirection:'row',
-  },
   dreamglassgroupText : {
     color : '#c9c9c9',
     fontSize : 16,

@@ -13,19 +13,18 @@ import DesignPage from './src/components/pages/DesignPage';
 
 import ApplicationSideMenu from './src/components/ApplicationSideMenu';
 import styles from './src/style/ApplicationStyle.js';
+import ApplicationSideMenuHOC from './src/components/hoc/ApplicationSideMenuHOC';
 
 class App extends Component {
 
   render() {
     return (
           <View style={styles.applicationContainer}>
-            <ApplicationSideMenu>
-              <Navigator
-                initialRoute={{id : 'MainPage', name : 'Index'}}
-                renderScene={this.renderScene.bind(this)}
-                configureScene={this.configureScene.bind(this)}
-              />
-            </ApplicationSideMenu>
+            <Navigator
+              initialRoute={{id : 'MainPage', name : 'Index'}}
+              renderScene={this.renderScene.bind(this)}
+              configureScene={this.configureScene.bind(this)}
+            />
           </View>
     );
   }
@@ -41,16 +40,15 @@ class App extends Component {
   // navigator renderScene function
   renderScene(route, navigator){
     const routeID = route.id;
+    let MixinComponent;
     // alert(routeID);
     if (routeID === 'MainPage'){
-      return <MainPage
-                navigator={navigator}
-                />
+      MixinComponent = ApplicationSideMenuHOC(MainPage);
+      return <MixinComponent navigator={navigator}/>
     }
     if (routeID === 'DesignPage'){
-      return <DesignPage
-                navigator={navigator}
-                />
+      MixinComponent = ApplicationSideMenuHOC(DesignPage);
+      return <MixinComponent navigator={navigator}/>
     }
   }
 }
