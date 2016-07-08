@@ -3,7 +3,8 @@ import {
   Text,
   View,
   Picker,
-  TouchableHighlight
+  TouchableHighlight,
+  Alert
 } from 'react-native';
 import styles from '../style/GlassDimensionsPickerStyle';
 import config from '../config/GlassDimensionsConfig';
@@ -19,18 +20,13 @@ export default class GlassDimensionsPicker extends Component {
   }
 
   _getWidthDimensionPickerValues(){
-    const data = config.width;
-    data.unshift('Width');
-    return data.map((el, index) => <Picker.Item value={el} label={el} key={'width' + index}/>);
+    return config.width.map((el, index) => <Picker.Item value={el} label={el} key={'width' + index}/>);
   }
   _getHeightDimensionPickerValues(){
-    const data = config.height;
-    data.unshift('Height');
-    return data.map((el, index) => <Picker.Item value={el} label={el} key={'height' + index}/>);
+    return config.height.map((el, index) => <Picker.Item value={el} label={el} key={'height' + index}/>);
   }
 
   render(){
-
     return (
       <View>
         <View style={styles.dimensionsContainer}>
@@ -47,10 +43,20 @@ export default class GlassDimensionsPicker extends Component {
               {heightOptions}
           </Picker>
         </View>
-        <TouchableHighlight style={styles.confirmButton} >
+        <TouchableHighlight style={styles.confirmButton} onPress={this._confirmButtonPress.bind(this)}>
           <Text style={styles.confirmButtonText}>CONFIRM</Text>
         </TouchableHighlight>
       </View>
     );
+  }
+  _confirmButtonPress(){
+    if (this.state.width === 'Width' || this.state.height === 'Height'){
+      Alert.alert('Dimensions are not selected!', 'Please, choose width and height of your Dream Glass from the select boxes.', [{text: 'GOT IT!'}]);
+      return;
+    }
+    this.props.navigator.push({
+      id : 'NewDesignPage',
+      name: 'constructor'
+    });
   }
 }

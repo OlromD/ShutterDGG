@@ -58,7 +58,7 @@ export default class MainPage extends Component {
           <Image style={styles.logo} source={LOGO}></Image>
           <Text style={styles.enterDimensionsText}>Choose Dimensions</Text>
           <Text style={styles.unitOfMeasurement}>(in cm)</Text>
-          <GlassDimensionsPicker />
+          <GlassDimensionsPicker navigator={this.props.navigator}/>
           <View style={styles.socialIcons}>
             <Text
               style={styles.dreamglassgroupText}
@@ -96,17 +96,5 @@ export default class MainPage extends Component {
       .catch(err => {
         console.err('An error occurred ', err);
       });
-  }
-
-  _confirmButtonPress(){
-    let validationResult;
-    if ((validationResult = GlassValidationService(this.state.glassDimensions)) !== null){
-      ShowAlertService(validationResult);
-      return;
-    }
-    this.props.navigator.push({
-      id : 'DesignPage',
-      name: 'Constructor'
-    });
   }
 }

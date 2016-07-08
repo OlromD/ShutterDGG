@@ -17,7 +17,7 @@ export default class DesignPage extends Component {
   render(){
     return (
       <View style={styles.container}>
-        <Text>New DesignPage</Text>
+        <Text style={styles.caption}>New Design Page</Text>
       </View>
     );
   }

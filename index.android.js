@@ -9,7 +9,9 @@ import {
 } from 'react-native';
 
 import MainPage from './src/components/pages/MainPage';
-import DesignPage from './src/components/pages/DesignPage';
+import NewDesignPage from './src/components/pages/NewDesignPage';
+import AllDesignsPage from './src/components/pages/AllDesignsPage';
+import SettingsPage from './src/components/pages/SettingsPage';
 
 import ApplicationSideMenu from './src/components/ApplicationSideMenu';
 import styles from './src/style/ApplicationStyle.js';
@@ -46,8 +48,16 @@ class App extends Component {
       MixinComponent = ApplicationSideMenuHOC(MainPage);
       return <MixinComponent navigator={navigator}/>
     }
-    if (routeID === 'DesignPage'){
-      MixinComponent = ApplicationSideMenuHOC(DesignPage);
+    if (routeID === 'NewDesignPage'){
+      MixinComponent = ApplicationSideMenuHOC(NewDesignPage);
+      return <MixinComponent navigator={navigator}/>
+    }
+    if (routeID === 'AllDesignsPage'){
+      MixinComponent = ApplicationSideMenuHOC(AllDesignsPage);
+      return <MixinComponent navigator={navigator}/>
+    }
+    if (routeID === 'SettingsPage'){
+      MixinComponent = ApplicationSideMenuHOC(SettingsPage);
       return <MixinComponent navigator={navigator}/>
     }
   }

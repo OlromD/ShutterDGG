@@ -29,18 +29,8 @@ export default StyleSheet.create({
     fontSize : 17,
     fontWeight : 'bold'
   },
-  confirmButton :{
-    width: 210,
-    padding: 10,
-    backgroundColor : '#69c8ca',
-    marginTop: 10
-  },
-  confirmButtonText :{
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#fff',
-    fontWeight : 'bold'
-  },
+
+
   logo : {
     width: 300,
     height: 150,
