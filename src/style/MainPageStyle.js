@@ -8,7 +8,7 @@ export default StyleSheet.create({
     flex : 1,
     alignItems : 'center',
     alignSelf : 'center',
-    paddingTop: 40,
+    paddingTop: 35,
     height: null
   },
   applicationName : {
@@ -51,7 +51,7 @@ export default StyleSheet.create({
     fontWeight: 'bold'
   },
   socialIcons : {
-    marginTop: 40,
+    marginTop: 30,
   },
   socialIconsContainer : {
     flexDirection:'row',

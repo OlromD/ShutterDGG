@@ -55,6 +55,7 @@ export default class MainPage extends Component {
         <View style={styles.container}>
           <Text style={styles.applicationCaption}>DYNAMIC</Text>
           <Text style={styles.applicationName}>SHUTTER</Text>
+          <Text style={[ styles.applicationName, {color: '#fff', fontSize: 20} ]}>BY</Text>
           <Image style={styles.logo} source={LOGO}></Image>
           <Text style={styles.enterDimensionsText}>Choose Dimensions</Text>
           <Text style={styles.unitOfMeasurement}>(in cm)</Text>
