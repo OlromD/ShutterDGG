@@ -6,9 +6,17 @@ export default StyleSheet.create({
     backgroundColor: '#eee',
     // flexDirection: 'row'
   },
-  caption : {
-    fontSize: 25,
-    margin: 10,
-    textAlign : 'center'
+  constructorContainer :{
+    flex: 1,
+    backgroundColor : 'red',
+    flexDirection : 'column'
+  },
+  constructor: {
+    flex: 1,
+    backgroundColor: 'green'
+  },
+  controlPanel: {
+    height: 150,
+    backgroundColor: 'yellow'
   }
 });

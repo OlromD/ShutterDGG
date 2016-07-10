@@ -27,7 +27,8 @@ export default class DesignPage extends Component {
       modalVisible : false,
       animationType : "Up > Downward",
       timeSequence : '0.5',
-      toggleDesign : false
+      toggleDesign : false,
+      repetitionCycle : '2'
     }
   }
   _setModalVisibility(value){
@@ -40,6 +41,11 @@ export default class DesignPage extends Component {
   _getMovingSequencePickerItems(){
     return config.movingSequence.map((el) => <PickerItem label={el} value={el} key={el} />);
   }
+  _getRepetitionCyclePickerItems(){
+    return config.repetitionCycle.map((el) => <PickerItem label={el} value={el} key={el} />);
+  }
+
+
   render(){
     return (
       <View style={styles.container}>
@@ -78,6 +84,16 @@ export default class DesignPage extends Component {
                   { this._getTimeSequencePickerItems() }
                 </Picker>
               </View>
+              <View style={[modalStyles.propContainer, {flexDirection: 'row', justifyContent: 'space-between'}]}>
+                <Text style={modalStyles.propLabel}>Repetition cycle</Text>
+                <Picker
+                  style={modalStyles.repetitionCycle}
+                  selectedValue={this.state.repetitionCycle}
+                  onValueChange={(value) => this.setState({repetitionCycle: value})}
+                >
+                  { this._getRepetitionCyclePickerItems() }
+                </Picker>
+              </View>
               <View style={{alignItems: 'center'}}>
                 <TouchableHighlight onPress={() => this._setModalVisibility(false)} style={modalStyles.closeButton}>
                   <Text style={modalStyles.closeButtonText}>Close</Text>
@@ -86,11 +102,14 @@ export default class DesignPage extends Component {
             </View>
           </View>
         </Modal>
-        <TouchableHighlight
-          onPress={() => this._setModalVisibility(true)}
-          >
-          <Text>Open modal</Text>
-        </TouchableHighlight>
+        <View style={styles.constructorContainer}>
+          <View style={styles.constructor}>
+          </View>
+          <View style={styles.controlPanel}>
+            <Text onPress={() => this._setModalVisibility(true)}>Open modal</Text>
+          </View>
+        </View>
+
       </View>
     );
   }

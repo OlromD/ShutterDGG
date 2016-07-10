@@ -57,5 +57,11 @@ export default StyleSheet.create({
     width: 55,
     height: 30,
     marginTop: 5
+  },
+  repetitionCycle : {
+    backgroundColor : '#efefef',
+    width: 55,
+    height: 30,
+    marginTop: 5
   }
 });
