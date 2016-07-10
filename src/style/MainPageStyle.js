@@ -29,8 +29,6 @@ export default StyleSheet.create({
     fontSize : 17,
     fontWeight : 'bold'
   },
-
-
   logo : {
     width: 300,
     height: 150,

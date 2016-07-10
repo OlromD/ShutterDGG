@@ -13,7 +13,8 @@ import {
   TouchableHighlight,
   Dimensions,
   Picker,
-  Switch
+  Switch,
+  Image
 } from 'react-native';
 import styles from '../../style/DesignPageStyle';
 import modalStyles from '../../style/NewDesignPageModalStyle';
@@ -106,10 +107,54 @@ export default class DesignPage extends Component {
           <View style={styles.constructor}>
           </View>
           <View style={styles.controlPanel}>
-            <Text onPress={() => this._setModalVisibility(true)}>Open modal</Text>
+            <View style={[styles.joystick,]}>
+              <TouchableHighlight
+                style={styles.joystickDirectionButton}
+              >
+                <Text style={styles.joystickDirectionButtonText}>&and;</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={styles.joystickOKButton}
+              >
+                <Text style={styles.joystickOKButtonText}>OK</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={styles.joystickDirectionButton}
+              >
+                <Text style={styles.joystickDirectionButtonText}>&or;</Text>
+              </TouchableHighlight>
+            </View>
+            <View style={styles.logoContainer}>
+              <TouchableHighlight
+                onPress={ () => this._setModalVisibility(true)}
+                style={styles.openPropsButton}
+              >
+                <Text style={ styles.openPropsButtonText }>Properties</Text>
+              </TouchableHighlight>
+              <Image
+                source={require('./mainpagelogo.png')}
+                style={styles.controlPanelLogo}
+              />
+            </View>
+            <View style={[styles.joystick, {flexDirection: 'row'}]}>
+              <TouchableHighlight
+                style={styles.joystickDirectionButton}
+              >
+                <Text style={styles.joystickDirectionButtonText}>&lt;</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={styles.joystickOKButton}
+              >
+                <Text style={styles.joystickOKButtonText}>OK</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={styles.joystickDirectionButton}
+              >
+                <Text style={styles.joystickDirectionButtonText}>&gt;</Text>
+              </TouchableHighlight>
+            </View>
           </View>
         </View>
-
       </View>
     );
   }
