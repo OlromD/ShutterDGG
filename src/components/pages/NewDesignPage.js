@@ -62,7 +62,7 @@ export default class DesignPage extends Component {
                 </Picker>
               </View>
               <View style={[modalStyles.propContainer, {flexDirection: 'row', justifyContent: 'space-between'}]}>
-                <Text style={modalStyles.propLabel}>Toggle design</Text>
+                <Text style={modalStyles.propLabel}>Toggling design</Text>
                 <Switch
                   value={ this.state.toggleDesign }
                   onValueChange={ () => { this.setState({toggleDesign: !this.state.toggleDesign }) } }
