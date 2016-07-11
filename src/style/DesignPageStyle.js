@@ -17,7 +17,7 @@ export default StyleSheet.create({
   },
   controlPanel: {
     height: 150,
-    backgroundColor: '#35383f',
+    backgroundColor: '#201f25',
     flexDirection : 'row',
     justifyContent : 'space-between'
   },

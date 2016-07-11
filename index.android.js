@@ -23,7 +23,7 @@ class App extends Component {
     return (
           <View style={styles.applicationContainer}>
             <Navigator
-              initialRoute={{id : 'NewDesignPage', name : 'Index'}}
+              initialRoute={{id : 'MainPage', name : 'Index'}}
               renderScene={this.renderScene.bind(this)}
               configureScene={this.configureScene.bind(this)}
             />
