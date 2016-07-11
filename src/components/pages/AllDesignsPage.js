@@ -142,7 +142,7 @@ export default class AllDesignsPage extends Component {
                 <TouchableHighlight style={styles.controlButton}
                   onPress={this._createNewDesign.bind(this)}
                 >
-                  <Text style={styles.controlButtonText}>Create new design</Text>
+                  <Text style={styles.controlButtonText}>New design</Text>
                 </TouchableHighlight>
                 <TouchableHighlight style={styles.controlButton}>
                   <Text style={styles.controlButtonText}>Save & Load</Text>
@@ -161,10 +161,10 @@ export default class AllDesignsPage extends Component {
         </View>
 
         <Modal
-          animationType={"slide"}
+          animationType={"fade"}
           transparent={true}
           visible={this.state.allDesignsModalVisible}
-          onRequestClose={() => {alert("Modal has been closed.")}}
+          onRequestClose={() => this._setModalVisibility(false)}
         >
          <View style={modalStyles.container}>
           <View style={modalStyles.contentContainer}>

@@ -27,14 +27,27 @@ export default StyleSheet.create({
     height: 100
   },
   openPropsButton : {
-    width: 130,
+    paddingLeft: 5,
+    paddingRight: 5,
     height: 30,
     backgroundColor: '#68c6c8',
-    marginTop: 10,
-    marginBottom: 10,
+    margin: 5,
     borderRadius: 5
   },
   openPropsButtonText : {
+    color: '#fff',
+    fontSize: 18,
+    textAlign: 'center'
+  },
+  saveButton : {
+    paddingLeft: 5,
+    paddingRight: 5,
+    height: 30,
+    backgroundColor: '#68c6c8',
+    margin: 5,
+    borderRadius: 5
+  },
+  saveButtonText : {
     color: '#fff',
     fontSize: 18,
     textAlign: 'center'

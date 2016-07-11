@@ -46,6 +46,11 @@ export default class DesignPage extends Component {
     return config.repetitionCycle.map((el) => <PickerItem label={el} value={el} key={el} />);
   }
 
+  _saveDesign(){
+    this.props.navigator.push({
+      id: 'AllDesignsPage'
+    });
+  }
 
   render(){
     return (
@@ -103,6 +108,7 @@ export default class DesignPage extends Component {
             </View>
           </View>
         </Modal>
+
         <View style={styles.constructorContainer}>
           <View style={styles.constructor}>
           </View>
@@ -124,34 +130,40 @@ export default class DesignPage extends Component {
                 <Text style={styles.joystickDirectionButtonText}>&or;</Text>
               </TouchableHighlight>
             </View>
-            <View style={styles.logoContainer}>
-              <TouchableHighlight
-                onPress={ () => this._setModalVisibility(true)}
-                style={styles.openPropsButton}
-              >
-                <Text style={ styles.openPropsButtonText }>Properties</Text>
-              </TouchableHighlight>
-              <Image
-                source={require('./mainpagelogo.png')}
-                style={styles.controlPanelLogo}
-              />
-            </View>
-            <View style={[styles.joystick, {flexDirection: 'row'}]}>
-              <TouchableHighlight
-                style={styles.joystickDirectionButton}
-              >
-                <Text style={styles.joystickDirectionButtonText}>&lt;</Text>
-              </TouchableHighlight>
-              <TouchableHighlight
-                style={styles.joystickOKButton}
-              >
-                <Text style={styles.joystickOKButtonText}>OK</Text>
-              </TouchableHighlight>
-              <TouchableHighlight
-                style={styles.joystickDirectionButton}
-              >
-                <Text style={styles.joystickDirectionButtonText}>&gt;</Text>
-              </TouchableHighlight>
+
+            <View style={[styles.joystick, {flexDirection :'column'}]}>
+              <View style={ {flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
+                  <TouchableHighlight
+                    style={styles.joystickDirectionButton}
+                  >
+                    <Text style={styles.joystickDirectionButtonText}>&lt;</Text>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    style={styles.joystickOKButton}
+                  >
+                    <Text style={styles.joystickOKButtonText}>OK</Text>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    style={styles.joystickDirectionButton}
+                  >
+                    <Text style={styles.joystickDirectionButtonText}>&gt;</Text>
+                  </TouchableHighlight>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableHighlight
+                  onPress={ () => this._setModalVisibility(true)}
+                  style={styles.openPropsButton}
+                >
+                  <Text style={ styles.openPropsButtonText }>Properties</Text>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  onPress={ this._saveDesign.bind(this)}
+                  style={styles.saveButton}
+                >
+                  <Text style={ styles.saveButtonText }>Save</Text>
+                </TouchableHighlight>
+              </View>
+
             </View>
           </View>
         </View>
