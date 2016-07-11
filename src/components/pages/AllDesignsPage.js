@@ -86,6 +86,7 @@ export default class AllDesignsPage extends Component {
     });
   }
   _editCurrentDesign(){
+    this._setModalVisibility(false);
     this.props.navigator.push({
       id: 'NewDesignPage'
     });

@@ -46,15 +46,15 @@ class App extends Component {
     // alert(routeID);
     if (routeID === 'MainPage'){
       MixinComponent = ApplicationSideMenuHOC(MainPage);
-      return <MixinComponent navigator={navigator}/>
+      return <MainPage navigator={navigator}/>
     }
     if (routeID === 'NewDesignPage'){
       MixinComponent = ApplicationSideMenuHOC(NewDesignPage);
-      return <MixinComponent navigator={navigator}/>
+      return <NewDesignPage navigator={navigator}/>
     }
     if (routeID === 'AllDesignsPage'){
       MixinComponent = ApplicationSideMenuHOC(AllDesignsPage);
-      return <MixinComponent navigator={navigator}/>
+      return <AllDesignsPage navigator={navigator}/>
     }
     if (routeID === 'SettingsPage'){
       MixinComponent = ApplicationSideMenuHOC(SettingsPage);

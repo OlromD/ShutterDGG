@@ -28,8 +28,8 @@ function arrayFactory(length){
 }
 
 const PickerItem = Picker.Item;
-const rows = 60 / 5,
-      cols =  30 / 5,
+const rows = 120 / 5,
+      cols =  60 / 5,
       cellSize = Math.ceil((Dimensions.get('screen').width - 20) / (Math.max(cols, rows) + 1));
 
 export default class DesignPage extends Component {
@@ -73,7 +73,7 @@ export default class DesignPage extends Component {
     for (let i = 0; i < cols; i++){
       res.push(
         <View key={i} style={[styles.gridIndicator, {width: cellSize, height: cellSize, backgroundColor: (index === i)?'orange': 'yellow'}]}>
-          <Text key={i} style={{textAlign: 'center', fontSize: 12}}>{indicators[i]}</Text>
+          <Text key={i} style={{textAlign: 'center', fontSize: 10}}>{indicators[i]}</Text>
         </View>);
     }
     return res;
@@ -85,7 +85,7 @@ export default class DesignPage extends Component {
     for (let i = 0; i < rows; i++){
       res.push(
         <View key={i} style={[styles.gridIndicator, {width: cellSize, height: cellSize, backgroundColor: (index === i)?'orange': 'yellow'}]}>
-          <Text key={i} style={{textAlign: 'center', fontSize: 12}}>{indicators[i]}</Text>
+          <Text key={i} style={{textAlign: 'center', fontSize: 10}}>{indicators[i]}</Text>
         </View>);
     }
     return res;
