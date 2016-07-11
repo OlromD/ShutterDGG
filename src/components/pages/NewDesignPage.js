@@ -20,7 +20,17 @@ import styles from '../../style/DesignPageStyle';
 import modalStyles from '../../style/NewDesignPageModalStyle';
 import config from '../../config/NewDesignConfig';
 
+function arrayFactory(length){
+  const arr = [];
+  for (let i = 0; i< length; i++)
+    arr.push(0);
+  return arr;
+}
+
 const PickerItem = Picker.Item;
+const rows = 60 / 5,
+      cols =  30 / 5,
+      cellSize = Math.ceil((Dimensions.get('screen').width - 20) / (Math.max(cols, rows) + 1));
 
 export default class DesignPage extends Component {
   componentWillMount(){
@@ -29,7 +39,11 @@ export default class DesignPage extends Component {
       animationType : "Up > Downward",
       timeSequence : '0.5',
       toggleDesign : false,
-      repetitionCycle : '2'
+      repetitionCycle : '2',
+      verticalIndex : 0,
+      horizontalIndex: 0,
+      verticalIndicators: arrayFactory(rows),
+      horizontalIndicators: arrayFactory(cols)
     }
   }
   _setModalVisibility(value){
@@ -52,6 +66,48 @@ export default class DesignPage extends Component {
     });
   }
 
+  _getHorizontalGridIndicators(){
+    let res = [];
+    const index = this.state.horizontalIndex,
+          indicators = this.state.horizontalIndicators;
+    for (let i = 0; i < cols; i++){
+      res.push(
+        <View key={i} style={[styles.gridIndicator, {width: cellSize, height: cellSize, backgroundColor: (index === i)?'orange': 'yellow'}]}>
+          <Text key={i} style={{textAlign: 'center', fontSize: 12}}>{indicators[i]}</Text>
+        </View>);
+    }
+    return res;
+  }
+  _getVerticalGridIndicators(){
+    let res = [];
+    const index = this.state.verticalIndex,
+          indicators = this.state.verticalIndicators;
+    for (let i = 0; i < rows; i++){
+      res.push(
+        <View key={i} style={[styles.gridIndicator, {width: cellSize, height: cellSize, backgroundColor: (index === i)?'orange': 'yellow'}]}>
+          <Text key={i} style={{textAlign: 'center', fontSize: 12}}>{indicators[i]}</Text>
+        </View>);
+    }
+    return res;
+  }
+  _getGridRow(row){
+    let res = [];
+    const horizontalIndicators = this.state.horizontalIndicators,
+          verticalIndicators = this.state.verticalIndicators;
+    for (let i = 0; i < cols; i++)
+      res.push(
+        <View key={i} style={[styles.gridCell, {width: cellSize, height: cellSize, backgroundColor: ((horizontalIndicators[i] !== verticalIndicators[row])?'#fff':'#ccc')}]}>
+        </View>
+      );
+    return res;
+  }
+  _getGrid(){
+    let res = [];
+    for (let i = 0; i < rows; i++){
+      res.push(<View style={{flexDirection: 'row'}} key={i}>{this._getGridRow(i)}</View>);
+    }
+    return res;
+  }
   render(){
     return (
       <View style={styles.container}>
@@ -111,21 +167,37 @@ export default class DesignPage extends Component {
 
         <View style={styles.constructorContainer}>
           <View style={styles.constructor}>
-            
+            <View style={styles.gridContainer}>
+              <View style={{flexDirection: 'column'}}>
+                <View style={styles.horizontalIndicatorsContainer}>
+                  { this._getHorizontalGridIndicators() }
+                </View>
+                <View style={{flex: 1, /*backgroundColor: 'green',*/ flexDirection: 'column'}}>
+                  { this._getGrid() }
+                </View>
+              </View>
+
+              <View style={[styles.vertivalIndicatorsContainer, {marginTop: cellSize}]}>
+                { this._getVerticalGridIndicators() }
+              </View>
+            </View>
           </View>
           <View style={styles.controlPanel}>
             <View style={[styles.joystick,]}>
               <TouchableHighlight
                 style={styles.joystickDirectionButton}
+                onPress={this._moveUp.bind(this)}
               >
                 <Text style={styles.joystickDirectionButtonText}>&and;</Text>
               </TouchableHighlight>
               <TouchableHighlight
+                onPress={this._changeVerticalIndicatorValue.bind(this)}
                 style={styles.joystickOKButton}
               >
                 <Text style={styles.joystickOKButtonText}>OK</Text>
               </TouchableHighlight>
               <TouchableHighlight
+                onPress={this._moveDown.bind(this)}
                 style={styles.joystickDirectionButton}
               >
                 <Text style={styles.joystickDirectionButtonText}>&or;</Text>
@@ -135,16 +207,19 @@ export default class DesignPage extends Component {
             <View style={[styles.joystick, {flexDirection :'column'}]}>
               <View style={ {flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 10}}>
                   <TouchableHighlight
+                    onPress={this._moveLeft.bind(this)}
                     style={styles.joystickDirectionButton}
                   >
                     <Text style={styles.joystickDirectionButtonText}>&lt;</Text>
                   </TouchableHighlight>
                   <TouchableHighlight
+                    onPress={this._changeHorizontalIndicatorValue.bind(this)}
                     style={styles.joystickOKButton}
                   >
                     <Text style={styles.joystickOKButtonText}>OK</Text>
                   </TouchableHighlight>
                   <TouchableHighlight
+                    onPress={this._moveRight.bind(this)}
                     style={styles.joystickDirectionButton}
                   >
                     <Text style={styles.joystickDirectionButtonText}>&gt;</Text>
@@ -171,6 +246,61 @@ export default class DesignPage extends Component {
       </View>
     );
   }
+
+  _changeVerticalIndicatorValue(){
+    const index = this.state.verticalIndex;
+    let indicators = [].concat(this.state.verticalIndicators);
+    const val = indicators[index];
+    indicators[index] = val === 0? 1: 0;
+    this.setState({
+      verticalIndicators : indicators
+    });
+  }
+  _changeHorizontalIndicatorValue(){
+    const index = this.state.horizontalIndex;
+    let indicators = [].concat(this.state.horizontalIndicators);
+    const val = indicators[index];
+    indicators[index] = val === 0? 1: 0;
+    this.setState({
+      horizontalIndicators : indicators
+    });
+  }
+
+  _moveUp(){
+    const index = this.state.verticalIndex;
+    if (index > 0){
+      this.setState({
+        verticalIndex : index - 1
+      });
+    }
+  }
+  _moveDown(){
+    const index = this.state.verticalIndex;
+    if (index < rows - 1){
+      this.setState({
+        verticalIndex : index + 1
+      });
+    }
+  }
+
+  _moveLeft(){
+    const index = this.state.horizontalIndex;
+    if (index > 0){
+      this.setState({
+        horizontalIndex : index - 1
+      });
+    }
+  }
+  _moveRight(){
+    const index = this.state.horizontalIndex;
+    if (index < cols - 1){
+      this.setState({
+        horizontalIndex : index + 1
+      });
+    }
+  }
+
+
   onActionSelected( position) {
     if (position === 0) { // index of 'Settings'
       showSettings();

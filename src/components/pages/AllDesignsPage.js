@@ -23,7 +23,7 @@ export default class AllDesignsPage extends Component {
 
   componentWillMount(){
     this.state = {
-      allDesignsList : arrayFactory(80),
+      allDesignsList : arrayFactory(40),
       selectedDesignsList : [1, 45, 16, 2, 4, 5, 17, 42].sort((a,b) => a - b),
       currentDesign: null,
       allDesignsModalVisible : false,
