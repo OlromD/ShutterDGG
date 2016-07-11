@@ -8,12 +8,10 @@ export default StyleSheet.create({
   },
   constructorContainer :{
     flex: 1,
-    backgroundColor : 'red',
     flexDirection : 'column'
   },
   constructor: {
     flex: 1,
-    backgroundColor: 'green'
   },
   controlPanel: {
     height: 150,
@@ -87,5 +85,6 @@ export default StyleSheet.create({
     textAlign: 'center',
     margin: 5,
     fontSize: 20
-  }
+  },
+
 });

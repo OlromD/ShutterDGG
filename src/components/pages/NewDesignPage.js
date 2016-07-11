@@ -111,6 +111,7 @@ export default class DesignPage extends Component {
 
         <View style={styles.constructorContainer}>
           <View style={styles.constructor}>
+            
           </View>
           <View style={styles.controlPanel}>
             <View style={[styles.joystick,]}>
