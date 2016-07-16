@@ -59,7 +59,7 @@ export default class MainPage extends Component {
           <Image style={styles.logo} source={LOGO}></Image>
           <Text style={styles.enterDimensionsText}>Choose Dimensions</Text>
           <Text style={styles.unitOfMeasurement}>(in cm)</Text>
-          <GlassDimensionsPicker navigator={this.props.navigator}/>
+          <GlassDimensionsPicker setDimensions={this.props.setDimensions} navigator={this.props.navigator}/>
           <View style={styles.socialIcons}>
             <Text
               style={styles.dreamglassgroupText}

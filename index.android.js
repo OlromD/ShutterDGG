@@ -18,7 +18,18 @@ import styles from './src/style/ApplicationStyle.js';
 import ApplicationSideMenuHOC from './src/components/hoc/ApplicationSideMenuHOC';
 
 class App extends Component {
-
+  componentDidMount(){
+    this.setState({
+      width: '',
+      height: ''
+    });
+  }
+  _setDimensions(width, height){
+    this.setState({
+      width: width,
+      height: height
+    });
+  }
   render() {
     return (
           <View style={styles.applicationContainer}>
@@ -46,19 +57,15 @@ class App extends Component {
     // alert(routeID);
     if (routeID === 'MainPage'){
       MixinComponent = ApplicationSideMenuHOC(MainPage);
-      return <MainPage navigator={navigator}/>
+      return <MainPage setDimensions={this._setDimensions.bind(this)} navigator={navigator}/>
     }
     if (routeID === 'NewDesignPage'){
       MixinComponent = ApplicationSideMenuHOC(NewDesignPage);
-      return <NewDesignPage navigator={navigator}/>
+      return <NewDesignPage width={this.state.width} height={this.state.height} navigator={navigator}/>
     }
     if (routeID === 'AllDesignsPage'){
       MixinComponent = ApplicationSideMenuHOC(AllDesignsPage);
       return <AllDesignsPage navigator={navigator}/>
-    }
-    if (routeID === 'SettingsPage'){
-      MixinComponent = ApplicationSideMenuHOC(SettingsPage);
-      return <MixinComponent navigator={navigator}/>
     }
   }
 }

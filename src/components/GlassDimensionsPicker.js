@@ -54,6 +54,7 @@ export default class GlassDimensionsPicker extends Component {
       Alert.alert('Dimensions are not selected!', 'Please, choose width and height of your Dream Glass from the select boxes.', [{text: 'GOT IT!'}]);
       return;
     }
+    this.props.setDimensions(this.state.width, this.state.height);
     this.props.navigator.push({
       id : 'NewDesignPage',
       name: 'constructor'
