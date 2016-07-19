@@ -14,8 +14,13 @@ import {
   Dimensions,
   Picker,
   Switch,
-  Image
+  Image,
+  Alert
 } from 'react-native';
+
+import BluetoothSerial from 'react-native-bluetooth-serial'
+
+
 import styles from '../../style/DesignPageStyle';
 import modalStyles from '../../style/NewDesignPageModalStyle';
 import config from '../../config/NewDesignConfig';
@@ -58,11 +63,34 @@ export default class DesignPage extends Component {
       showSelectedDesignsPanel: false,
       showAllDesignsPanel: false,
       selectedDesigns: config.selectedDesigns,
-      allDesigns: arrayFactory(100)
+      allDesigns: arrayFactory(100),
+      bluetoothModalVisibility : false,
+      bluetoothDeviceAddress : null,
+      devices : []
     }
   }
   componentDidMount(){
+    Promise.all([
+      BluetoothSerial.isEnabled(),
+      BluetoothSerial.list()
+    ])
+    .then((values) => {
+      const [ isEnabled, devices ] = values
+      this.setState({ isEnabled, devices })
+      if (!this.state.isEnabled){
+        this._requestBluetoothActivation();
+      }
+    })
   }
+
+  _requestBluetoothActivation(){
+    BluetoothSerial.enable()
+    .then((res) => {
+      this.setState({ isEnabled: res });
+    })
+    .catch((err) => alert(err))
+  }
+
   _setModalVisibility(value){
     this.setState({modalVisible : value});
   }
@@ -186,6 +214,89 @@ export default class DesignPage extends Component {
     ));
   }
 
+
+  _setBluetoothModalVisibility(value){
+    if (!value && this.state.connected){
+      this.disconnect();
+    }
+    this.setState({
+      bluetoothModalVisibility : value
+    });
+  }
+
+  discoverUnpaired () {
+    if (this.state.discovering) {
+      return false
+    } else {
+      this.setState({ discovering: true })
+      BluetoothSerial.discoverUnpairedDevices()
+      .then((unpairedDevices) => {
+        const devices = this.state.devices
+        const deviceIds = devices.map((d) => d.id)
+        unpairedDevices.forEach((device) => {
+          if (deviceIds.indexOf(device.id) < 0) {
+            devices.push(device)
+          }
+        })
+        this.setState({ devices, discovering: false })
+      })
+    }
+  }
+
+
+  connect (device) {
+    this.setState({ connecting: true })
+    BluetoothSerial.connect(device.id)
+    .then((res) => {
+      alert(res.message)
+      this.setState({ device, connected: true, connecting: false })
+    })
+    .catch((err) => {
+      this.setState({connecting: false });
+      alert(err);
+    })
+  }
+
+
+  disconnect () {
+    this.setState({ connected: false })
+    BluetoothSerial.disconnect()
+    .catch((err) => alert(err))
+  }
+
+
+  toggleConnect (value) {
+    if (value === true && this.state.device) {
+      this.connect(this.state.device)
+    } else {
+      this.disconnect()
+    }
+  }
+
+  write (message) {
+    if (!this.state.connected) {
+      alert('You must connect to device first')
+    }
+
+    BluetoothSerial.write(message)
+    .then((res) => {
+      alert('Successfuly wrote to device')
+      this.setState({ connected: true })
+    })
+    .catch((err) => alert(err))
+  }
+
+  sendDesignData(){
+    const device = this.state.devices.filter(d => d.id == this.state.bluetoothDeviceAddress)[0];
+    this.setState({device});
+    const message = '0 ' + this.state.horizontalIndicators.join('') + ' ' + this.state.verticalIndicators.join('');
+    if (!this.state.connected){
+      this.connect(device);
+    } else {
+      this.write(message);
+    }
+  }
+
   render(){
 
     const configPanel = (
@@ -279,8 +390,64 @@ export default class DesignPage extends Component {
     );
     return (
       <View style={styles.container}>
+      <Modal
+        animationType={'fade'}
+        transparent={true}
+        visible={this.state.bluetoothModalVisibility}
+        onRequestClose={() => alert('Bluetooth modal has been closed!')}
+      >
+        <View style={styles.bluetoothModalWrapper}>
+          <View style={styles.bluetoothModalBody}>
+            <Text style={styles.bluetoothModalTitle}>
+              Choose the device
+            </Text>
 
+            {
+              (this.state.devices.length || this.state.discovering)? (
+                <View>
 
+                  {(!this.state.discovering)?(
+                    <Picker
+                      selectedValue={this.state.bluetoothDeviceAddress}
+                      style={styles.bluetoothModalPicker}
+                      onValueChange={(val) => this.setState({bluetoothDeviceAddress : val, device: this.state.devices.filter(d => d.id == val)})}
+                    >
+                      {this.state.devices.map(d => <PickerItem label={d.name + ' <' + d.id + '>'} key={d.id} value={d.id}/>)}
+                    </Picker>
+                  ) : (
+                    <Text style={styles.bluetoothModalDescriptionText}>Wait, please, while discovering...</Text>
+                  )}
+                </View>
+              ): (<Text style={styles.bluetoothModalDescriptionText}>There are no available devices!</Text>)
+            }
+            <View style={styles.bluetoothModalControl}>
+
+              <TouchableHighlight
+                style={styles.bluetoothModalButton}
+                onPress={() => this.discoverUnpaired.bind(this)()}
+              >
+                <Text style={styles.bluetoothModalButtonText}>{this.state.discovering? 'Discovering...': 'Discover'}</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={styles.bluetoothModalButton}
+                onPress={() => this._setBluetoothModalVisibility.bind(this)(false)}
+              >
+                <Text style={styles.bluetoothModalButtonText}>Cancel</Text>
+              </TouchableHighlight>
+              {
+                (this.state.device)?(
+                  <TouchableHighlight
+                    style={styles.bluetoothModalButton}
+                    onPress={this.sendDesignData.bind(this)}
+                  >
+                    <Text style={styles.bluetoothModalButtonText}>{this.state.connecting? 'Connecting...': this.state.connected? 'Send': 'Connect'}</Text>
+                  </TouchableHighlight>
+                ) : null
+              }
+            </View>
+          </View>
+        </View>
+      </Modal>
         <View style={styles.constructorContainer}>
           <View style={styles.constructor}>
             <View style={styles.propsPanel}>
@@ -294,7 +461,7 @@ export default class DesignPage extends Component {
                   <View style={[styles.horizontalIndicatorsContainer, {alignItems: 'center', justifyContent: 'center'}]}>
                     { this._getHorizontalGridIndicators() }
                   </View>
-                  <View style={{/*backgroundColor: 'green',*/ flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                  <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                     { this._getGrid() }
                   </View>
                 </View>
@@ -342,7 +509,9 @@ export default class DesignPage extends Component {
                   <TouchableHighlight style={styles.rightPanelActionButton}>
                     <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>Save & Load</Text>
                   </TouchableHighlight>
-                  <TouchableHighlight style={styles.rightPanelActionButton}>
+                  <TouchableHighlight style={styles.rightPanelActionButton}
+                    onPress={this._runAndStopButtonPress.bind(this)}
+                  >
                     <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>RUN & STOP</Text>
                   </TouchableHighlight>
                 </View>
@@ -388,7 +557,25 @@ export default class DesignPage extends Component {
     );
   }
 
-
+  _runAndStopButtonPress(){
+    BluetoothSerial.isEnabled()
+      .then((val) => {
+        this.setState({isEnabled: val});
+        if (!val){
+          Alert.alert('Bluetooth is not activated!', 'For using dream glass you have to activate your bluetooth module.',[
+            {
+              text: 'Close'
+            },
+            {
+              text: 'Activate',
+              onPress: () => this._requestBluetoothActivation.bind(this)()
+            }
+          ]);
+        } else {
+          this._setBluetoothModalVisibility.bind(this)(true);
+        }
+      })
+  }
   _OKButtonPress(){
     const hIndex = this.state.horizontalIndex;
     if (hIndex === -1)

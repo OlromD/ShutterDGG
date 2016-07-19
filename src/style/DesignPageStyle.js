@@ -283,5 +283,51 @@ export default StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     alignItems: 'center'
+  },
+  bluetoothModalWrapper : {
+    flex: 1,
+    backgroundColor : 'rgba(0,0,0,.7)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  bluetoothModalBody : {
+    backgroundColor: '#fff',
+    width: 400,
+    borderRadius: 5,
+    padding: 15,
+    justifyContent: 'center'
+  },
+  bluetoothModalTitle : {
+    fontSize: 20,
+    color: '#000',
+    textAlign: 'center',
+    margin: 10
+  },
+  bluetoothModalButton : {
+    padding: 10,
+    backgroundColor: '#69c8ca',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20
+  },
+  bluetoothModalButtonText: {
+    fontSize: 18,
+    color: '#fff',
+    textAlign: 'center'
+  },
+  bluetoothModalControl : {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  bluetoothModalDescriptionText : {
+    fontSize: 20,
+    color: '#444',
+    textAlign: 'left',
+  },
+  bluetoothModalPicker : {
+    backgroundColor: '#eee',
+    height: 40,
+    marginTop: 20
   }
 });

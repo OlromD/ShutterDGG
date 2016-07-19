@@ -62,6 +62,7 @@ class App extends Component {
     if (routeID === 'NewDesignPage'){
       MixinComponent = ApplicationSideMenuHOC(NewDesignPage);
       return <NewDesignPage width={this.state.width} height={this.state.height} navigator={navigator}/>
+      // return <NewDesignPage width={30} height={60} navigator={navigator}/>
     }
     if (routeID === 'AllDesignsPage'){
       MixinComponent = ApplicationSideMenuHOC(AllDesignsPage);
