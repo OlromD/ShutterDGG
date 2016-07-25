@@ -21,12 +21,16 @@ export default StyleSheet.create({
     alignItems: 'center'
   },
   propsPanel : {
-    flex: 2,
+    width: 310,
+    overflow: 'visible',
     backgroundColor: '#fff',
     flexDirection: 'column',
     justifyContent: 'flex-end',
     marginTop: 10,
     marginBottom: 10,
+    position: 'absolute',
+    left: 0,
+    bottom: 10
 
   },
   panel : {
@@ -34,7 +38,8 @@ export default StyleSheet.create({
     flexDirection: 'column',
     borderWidth: 1,
     borderColor: '#ccc',
-    backgroundColor: '#f3f4f8'
+    backgroundColor: '#f3f4f8',
+    width: 310
   },
   panelHeader : {
     height: 60,
@@ -136,6 +141,19 @@ export default StyleSheet.create({
     justifyContent: 'center'
   },
   buttonRoundedText: {
+    fontSize: 23,
+    color: '#999',
+    textAlign: 'center'
+  },
+  buttonRectangle : {
+    flex: 1,
+    height: 40,
+    borderColor: '#aaa',
+    borderWidth: 1,
+    justifyContent: 'center',
+    margin: 10
+  },
+  buttonRectangleText : {
     fontSize: 23,
     color: '#999',
     textAlign: 'center'

@@ -24,15 +24,15 @@ import GlassDimensionsPicker from '../GlassDimensionsPicker.js';
 const LOGO = require('./mainpagelogo.png'),
       SOCIAL_ICONS = {
         twitter : {
-          url : 'http://twitter.com',
+          url : 'https://twitter.com/DreamGlassGroup',
           img : require('./twitter.png')
         },
         googlePlus : {
-          url : 'http://google.com',
+          url : 'https://plus.google.com/107335644429660129984/posts',
           img : require('./googleplus.png')
         },
         facebook : {
-          url : 'http://facebook.com',
+          url : 'https://www.facebook.com/pages/Dream-Glass-Group/225508604187023?fref=ts',
           img : require('./facebook.png')
         }
       },

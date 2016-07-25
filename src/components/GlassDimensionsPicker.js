@@ -31,7 +31,8 @@ export default class GlassDimensionsPicker extends Component {
       <View>
         <View style={styles.dimensionsContainer}>
           <Picker
-          style={styles.dimensionPicker}
+            style={styles.dimensionPicker}
+            mode="dropdown"
             selectedValue={this.state.width}
             onValueChange={(width) => this.setState({width: width})}>
               {widthOptions}
@@ -39,7 +40,9 @@ export default class GlassDimensionsPicker extends Component {
           <Picker
           style={styles.dimensionPicker}
             selectedValue={this.state.height}
-            onValueChange={(height) => this.setState({height: height})}>
+            onValueChange={(height) => this.setState({height: height})}
+            mode="dropdown"
+          >
               {heightOptions}
           </Picker>
         </View>

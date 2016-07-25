@@ -41,14 +41,14 @@ function arrayFactory(length){
 
 const PickerItem = Picker.Item;
 let rows,
-      cols,
-      cellSize;
+    cols,
+    cellSize;
 
 export default class DesignPage extends Component {
   componentWillMount(){
     rows = this.props.height / 5;
     cols =  this.props.width / 5;
-    cellSize = Math.ceil((Dimensions.get('window').width*3/5 - 20) / (Math.max(cols, rows) + 1));
+    cellSize = Math.ceil((Dimensions.get('window').width*4/5 - 20) / (Math.max(cols, rows) + 1));
     this.state = {
       modalVisible : false,
       animationType : "Up > Downward",
@@ -66,7 +66,13 @@ export default class DesignPage extends Component {
       allDesigns: arrayFactory(100),
       bluetoothModalVisibility : false,
       bluetoothDeviceAddress : null,
-      devices : []
+      devices : [],
+      activeDesignFromAll : undefined,
+      activeDesignFromSelected : undefined,
+      movingSequence : config.movingSequence[0],
+      timeSequence : config.timeSequence[0],
+      repetitionCycle : config.repetitionCycle[0],
+      intervalTime : config.intervalTime[0]
     }
   }
   componentDidMount(){
@@ -97,29 +103,43 @@ export default class DesignPage extends Component {
 
   _getTimeSequenceTableItems(){
       return config.timeSequence.map((el) => (
-        <TouchableHighlight style={styles.panelPropTableItem} key={el}>
-          <Text style={styles.panelPropTableItemText} key={el}>{el}</Text>
+        <TouchableHighlight
+          style={styles.panelPropTableItem}
+          key={el}
+          onPress={() => this.setState({timeSequence : el})}
+        >
+          <Text style={[styles.panelPropTableItemText, {color: (this.state.timeSequence === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
         </TouchableHighlight>
       ));
   }
   _getMovingSequenceListItems(){
     return config.movingSequence.map((el) => (
-      <TouchableHighlight style={styles.panelPropListItem} key={el}>
-        <Text style={styles.panelPropListItemText} key={el}>{el}</Text>
+      <TouchableHighlight style={styles.panelPropListItem} key={el}
+        onPress={() => this.setState({movingSequence : el})}
+      >
+        <Text style={[styles.panelPropListItemText, {color: (this.state.movingSequence === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
       </TouchableHighlight>)
   );
   }
   _getRepetitionCycleTableItems(){
     return config.repetitionCycle.map((el) => (
-      <TouchableHighlight style={styles.panelPropTableItem} key={'interval'+el}>
-        <Text style={styles.panelPropTableItemText} key={'interval'+el}>{el}</Text>
+      <TouchableHighlight
+        style={styles.panelPropTableItem}
+        key={'interval'+el}
+        onPress={() => this.setState({repetitionCycle: el})}
+      >
+        <Text style={[styles.panelPropTableItemText, {color: (this.state.repetitionCycle === el)?'#68c6c8': '#999'}]} key={'interval'+el}>{el}</Text>
       </TouchableHighlight>
     ));
   }
   _getIntervalTimeTableItems(){
     return config.intervalTime.map((el) => (
-      <TouchableHighlight style={styles.panelPropTableItem} key={el}>
-        <Text style={styles.panelPropTableItemText} key={el}>{el}</Text>
+      <TouchableHighlight
+        style={styles.panelPropTableItem}
+        key={el}
+        onPress={() => this.setState({intervalTime : el})}
+      >
+        <Text style={[styles.panelPropTableItemText, {color: (this.state.intervalTime === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
       </TouchableHighlight>
     ));
   }
@@ -200,16 +220,45 @@ export default class DesignPage extends Component {
 
   _getAllDesignsTable(){
     return this.state.allDesigns.map((el, index) => (
-      <TouchableHighlight style={styles.panelPropTableDesignItem} key={index}>
-        <Text style={styles.panelPropTableItemText} key={index}>{((el < 10)?'0': '') + el}</Text>
+      <TouchableHighlight style={
+          [
+            styles.panelPropTableDesignItem,
+            {
+              backgroundColor: (el === undefined)? '#ccc': (this.state.activeDesignFromAll === index)?'#69c9c8':'#f3f4f8',
+            }
+          ]
+        }
+        key={index}
+        onPress={() => {
+          if (el !== undefined)
+            this.setState({
+              activeDesignFromAll : index
+            })}
+        }
+      >
+          <Text style={styles.panelPropTableItemText} key={index}>{(el === undefined)?'':((el < 10)?'0': '') + el}</Text>
       </TouchableHighlight>
     ));
   }
 
   _getSelectedDesignsTable(){
     return this.state.selectedDesigns.map((el, index) => (
-      <TouchableHighlight style={styles.panelPropTableItem} key={'selected' + index}>
-        <Text style={styles.panelPropTableItemText} key={'selected' + index}>{((el < 10)?'0': '') + el}</Text>
+      <TouchableHighlight
+        style={[
+          styles.panelPropTableItem,
+          {
+            backgroundColor: (el === undefined)? '#ccc': (this.state.activeDesignFromSelected === index)?'#69c9c8':'#f3f4f8',
+          }
+        ]}
+        key={'selected' + index}
+        onPress={() => {
+          if (el !== undefined)
+            this.setState({
+              activeDesignFromSelected : index
+            })}
+        }
+      >
+        <Text style={styles.panelPropTableItemText} key={'selected' + index}>{(el === undefined)?'':((el < 10)?'0': '') + el}</Text>
       </TouchableHighlight>
     ));
   }
@@ -297,6 +346,102 @@ export default class DesignPage extends Component {
     }
   }
 
+  deleteDesignsFromAll(){
+    let designs = this.state.allDesigns,
+        index = this.state.activeDesignFromAll;
+    if (index === undefined)
+      return;
+    Alert.alert(
+      'Confirm deletion',
+      'Do you want to delete this design?',
+      [
+        {
+          text: 'NO'
+        },
+        {
+          text: 'YES',
+          onPress : () => {
+            designs[index] = undefined;
+            this.setState({
+              allDesigns : designs,
+              activeDesignFromAll : undefined
+            });
+          }
+        }
+      ]
+    );
+  }
+  deleteDesignsFromSelected(){
+    let designs = this.state.selectedDesigns,
+        index = this.state.activeDesignFromSelected;
+    if (index === undefined)
+      return;
+    Alert.alert(
+      'Confirm deletion',
+      'Do you want to delete this design from selected designs?',
+      [
+        {
+          text: 'NO'
+        },
+        {
+          text: 'YES',
+          onPress : () => {
+            designs[index] = undefined;
+            this.setState({
+              selectedDesigns : designs,
+              activeDesignFromSelected : undefined
+            });
+          }
+        }
+      ]
+    );
+  }
+
+  moveDesignToSelected(){
+    let index = this.state.activeDesignFromAll,
+        designs = this.state.selectedDesigns;
+    if (index === undefined)
+      return;
+    if (designs.indexOf(undefined) === -1){
+      Alert.alert(
+        'Oops...',
+        'You are able to add only 12 designs to selected. Remove one from selected and try again.',
+        [
+          {
+            text: 'GOT IT!'
+          }
+        ]
+      );
+      return;
+    }
+    if (designs.indexOf(''+index) !== -1){
+      Alert.alert(
+        'Oops...',
+        `This design exists in list of selected designs. You can't add it twice!`,
+        [
+          {
+            text: 'GOT IT!'
+          }
+        ]
+      );
+      return;
+    }
+    designs[designs.indexOf(undefined)] = index;
+    this.setState({
+      selectedDesigns: designs,
+      activeDesignFromAll : undefined
+    });
+    Alert.alert(
+      'Congratulations!',
+      `Design ${index} has been successfuly added to selected designs.`,
+      [
+        {
+          text: 'OK'
+        }
+      ]
+    );
+  }
+
   render(){
 
     const configPanel = (
@@ -338,11 +483,14 @@ export default class DesignPage extends Component {
     ),
     selectedDesignsPanel = (
       <View style={[styles.panel, {height: 500, flex: 0}]}>
-        <View style={styles.panelHeader}>
-          <TouchableHighlight style={styles.buttonRounded}
+        <View style={[styles.panelHeader, {flexDirection: 'row', justifyContent: 'space-between'}]}>
+          <TouchableHighlight style={styles.buttonRectangle}
             onPress={() => this._showSelectedDesignsPanelVisibility.bind(this)(false)}
           >
-            <Text style={styles.buttonRoundedText}>&or;</Text>
+            <Text style={styles.buttonRectangleText}>&or;</Text>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.buttonRectangle} onPress={this.deleteDesignsFromSelected.bind(this)}>
+            <Text style={styles.buttonRectangleText}>&#10005;</Text>
           </TouchableHighlight>
         </View>
         <View style={styles.panelBody}>
@@ -370,9 +518,15 @@ export default class DesignPage extends Component {
     ),
     allDesignsPanel = (
       <View style={styles.panel}>
-        <View style={styles.panelHeader}>
-          <TouchableHighlight style={styles.buttonRounded} onPress={() => this._showAllDesignsPanelVisibility.bind(this)(false)}>
-            <Text style={styles.buttonRoundedText}>&or;</Text>
+        <View style={[styles.panelHeader, {flexDirection: 'row', justifyContent: 'space-between'}]}>
+          <TouchableHighlight style={styles.buttonRectangle} onPress={this.moveDesignToSelected.bind(this)}>
+            <Text style={styles.buttonRectangleText}>&#10003;</Text>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.buttonRectangle} onPress={() => this._showAllDesignsPanelVisibility.bind(this)(false)}>
+            <Text style={styles.buttonRectangleText}>&or;</Text>
+          </TouchableHighlight>
+          <TouchableHighlight style={styles.buttonRectangle} onPress={this.deleteDesignsFromAll.bind(this)}>
+            <Text style={styles.buttonRectangleText}>&#10005;</Text>
           </TouchableHighlight>
         </View>
         <View style={styles.panelBody}>
@@ -450,11 +604,7 @@ export default class DesignPage extends Component {
       </Modal>
         <View style={styles.constructorContainer}>
           <View style={styles.constructor}>
-            <View style={styles.propsPanel}>
-              { this.state.showConfigPanel && configPanel}
-              { this.state.showSelectedDesignsPanel && selectedDesignsPanel}
-              { this.state.showAllDesignsPanel && allDesignsPanel}
-            </View>
+
             <View style={styles.grid}>
               <View style={styles.gridContainer}>
                 <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
@@ -470,6 +620,11 @@ export default class DesignPage extends Component {
                   { this._getVerticalGridIndicators() }
                 </View>
               </View>
+            </View>
+            <View style={styles.propsPanel}>
+              { this.state.showConfigPanel && configPanel}
+              { this.state.showSelectedDesignsPanel && selectedDesignsPanel}
+              { this.state.showAllDesignsPanel && allDesignsPanel}
             </View>
           </View>
           <View style={styles.controlPanel}>

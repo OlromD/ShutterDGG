@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   dimensionPicker : {
     backgroundColor : '#fff',
-    width: 100,
+    width: 120,
     height:30,
     padding: 5,
     margin: 5,
@@ -21,10 +21,14 @@ export default StyleSheet.create({
     fontWeight : 'bold'
   },
   confirmButton :{
-    width: 210,
+    width: 250,
     padding: 10,
     backgroundColor : '#69c8ca',
     margin: 5,
     marginTop: 10,
   },
+  dimensionPickerItemStyle : {
+    width: 100,
+    
+  }
 });
