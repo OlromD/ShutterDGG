@@ -1,10 +1,3 @@
-/*
-  DesignPage.js
-  This is page
-  with constructor' grid
-  of new user design
-*/
-
 import React, {Component} from 'react';
 import {
   View,
@@ -19,11 +12,13 @@ import {
 } from 'react-native';
 
 import BluetoothSerial from 'react-native-bluetooth-serial'
+import GlassGrid from './grid/GlassGrid';
 
+import styles from '../style/DesignPageStyle';
+import modalStyles from '../style/DesignPageModalStyle';
+import config from '../config/DesignConfig';
 
-import styles from '../../style/DesignPageStyle';
-import modalStyles from '../../style/NewDesignPageModalStyle';
-import config from '../../config/NewDesignConfig';
+const LOGO = require('./img/mainpagelogo.png');
 
 function arrayRowFactory(length){
   const arr = [];
@@ -48,7 +43,7 @@ export default class DesignPage extends Component {
   componentWillMount(){
     rows = this.props.height / 5;
     cols =  this.props.width / 5;
-    cellSize = Math.ceil((Dimensions.get('window').width*4/5 - 20) / (Math.max(cols, rows) + 1));
+    cellSize = Math.ceil((Dimensions.get('window').width - 100) / (Math.max(cols, rows) + 1));
     this.state = {
       modalVisible : false,
       animationType : "Up > Downward",
@@ -76,17 +71,17 @@ export default class DesignPage extends Component {
     }
   }
   componentDidMount(){
-    Promise.all([
-      BluetoothSerial.isEnabled(),
-      BluetoothSerial.list()
-    ])
-    .then((values) => {
-      const [ isEnabled, devices ] = values
-      this.setState({ isEnabled, devices })
-      if (!this.state.isEnabled){
-        this._requestBluetoothActivation();
-      }
-    })
+    // Promise.all([
+    //   BluetoothSerial.isEnabled(),
+    //   BluetoothSerial.list()
+    // ])
+    // .then((values) => {
+    //   const [ isEnabled, devices ] = values
+    //   this.setState({ isEnabled, devices })
+    //   if (!this.state.isEnabled){
+    //     this._requestBluetoothActivation();
+    //   }
+    // })
   }
 
   _requestBluetoothActivation(){
@@ -128,7 +123,7 @@ export default class DesignPage extends Component {
         key={'interval'+el}
         onPress={() => this.setState({repetitionCycle: el})}
       >
-        <Text style={[styles.panelPropTableItemText, {color: (this.state.repetitionCycle === el)?'#68c6c8': '#999'}]} key={'interval'+el}>{el}</Text>
+        <Text style={[styles.panelPropTableItemText, {color: (this.state.repetitionCycle === el)?'#68c6c8': '#999', fontWeight: (el === 'n')?'800': '300'}]} key={'interval'+el}>{el}</Text>
       </TouchableHighlight>
     ));
   }
@@ -147,49 +142,6 @@ export default class DesignPage extends Component {
     this.props.navigator.push({
       id: 'AllDesignsPage'
     });
-  }
-
-  _getHorizontalGridIndicators(){
-    let res = [];
-    const index = this.state.horizontalIndex,
-          indicators = this.state.horizontalIndicators;
-    for (let i = 0; i < cols; i++){
-      res.push(
-        <View key={i} style={[styles.gridIndicator, {width: cellSize, height: cellSize, backgroundColor: (index === i)?'orange': 'yellow'}]}>
-          <Text key={i} style={{textAlign: 'center', fontSize: cellSize*.6}}>{indicators[i]}</Text>
-        </View>);
-    }
-    return res;
-  }
-  _getVerticalGridIndicators(){
-    let res = [];
-    const index = this.state.verticalIndex,
-          indicators = this.state.verticalIndicators;
-    for (let i = 0; i < rows; i++){
-      res.push(
-        <View key={i} style={[styles.gridIndicator, {width: cellSize, height: cellSize, backgroundColor: (index === i)?'orange': 'yellow'}]}>
-          <Text key={i} style={{textAlign: 'center', fontSize: cellSize*.6}}>{indicators[i]}</Text>
-        </View>);
-    }
-    return res;
-  }
-  _getGridRow(row){
-    let res = [];
-    const horizontalIndicators = this.state.horizontalIndicators,
-          verticalIndicators = this.state.verticalIndicators;
-    for (let i = 0; i < cols; i++)
-      res.push(
-        <View key={i} style={[styles.gridCell, {width: cellSize, height: cellSize, backgroundColor: ((horizontalIndicators[i] !== verticalIndicators[row])?'#fff':'#ccc')}]}>
-        </View>
-      );
-    return res;
-  }
-  _getGrid(){
-    let res = [];
-    for (let i = 0; i < rows; i++){
-      res.push(<View style={{flexDirection: 'row'}} key={i}>{this._getGridRow(i)}</View>);
-    }
-    return res;
   }
 
   _hideAllPanels(){
@@ -605,22 +557,15 @@ export default class DesignPage extends Component {
         <View style={styles.constructorContainer}>
           <View style={styles.constructor}>
 
-            <View style={styles.grid}>
-              <View style={styles.gridContainer}>
-                <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                  <View style={[styles.horizontalIndicatorsContainer, {alignItems: 'center', justifyContent: 'center'}]}>
-                    { this._getHorizontalGridIndicators() }
-                  </View>
-                  <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-                    { this._getGrid() }
-                  </View>
-                </View>
-
-                <View style={[styles.vertivalIndicatorsContainer, {marginTop: cellSize}]}>
-                  { this._getVerticalGridIndicators() }
-                </View>
-              </View>
-            </View>
+            <GlassGrid
+              rows={rows}
+              cols={cols}
+              verticalIndicators={this.state.verticalIndicators}
+              horizontalIndicators={this.state.horizontalIndicators}
+              verticalIndex={this.state.verticalIndex}
+              horizontalIndex={this.state.horizontalIndex}
+              cellSize={cellSize}
+            />
             <View style={styles.propsPanel}>
               { this.state.showConfigPanel && configPanel}
               { this.state.showSelectedDesignsPanel && selectedDesignsPanel}
@@ -651,7 +596,7 @@ export default class DesignPage extends Component {
               </TouchableHighlight>
             </View>
             <View style={{justifyContent: 'center', alignItems: 'center', width: 160}}>
-              <Image source={require('./mainpagelogo.png')} style={{width: 160, resizeMode: 'stretch', height: 100}}/>
+              <Image source={LOGO} style={{width: 160, resizeMode: 'stretch', height: 100}}/>
             </View>
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View style={{flex: 1, flexDirection: 'column'}}>

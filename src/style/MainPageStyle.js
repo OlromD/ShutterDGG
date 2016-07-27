@@ -9,6 +9,14 @@ export default StyleSheet.create({
     alignItems : 'center',
     alignSelf : 'center',
     paddingTop: 35,
+    height: null,
+    flexDirection: 'column',
+    justifyContent: 'space-between'
+  },
+  header : {
+    alignItems : 'center',
+    alignSelf : 'center',
+    paddingTop: 35,
     height: null
   },
   applicationName : {
@@ -49,11 +57,12 @@ export default StyleSheet.create({
     fontWeight: 'bold'
   },
   socialIcons : {
-    marginTop: 30,
+    height: 100
   },
   socialIconsContainer : {
     flexDirection:'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+
   },
   socialIcon : {
     width: 30,

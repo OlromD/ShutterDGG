@@ -1,6 +1,3 @@
-/*
-  index.android.js of ShutterDGG
-*/
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -8,14 +5,9 @@ import {
   View
 } from 'react-native';
 
-import MainPage from './src/components/pages/MainPage';
-import NewDesignPage from './src/components/pages/NewDesignPage';
-import AllDesignsPage from './src/components/pages/AllDesignsPage';
-import SettingsPage from './src/components/pages/SettingsPage';
-
-import ApplicationSideMenu from './src/components/ApplicationSideMenu';
+import MainPage from './src/components/MainPage';
+import DesignPage from './src/components/DesignPage';
 import styles from './src/style/ApplicationStyle.js';
-import ApplicationSideMenuHOC from './src/components/hoc/ApplicationSideMenuHOC';
 
 class App extends Component {
   componentDidMount(){
@@ -42,7 +34,6 @@ class App extends Component {
     );
   }
 
-  // navigator configureScene function
   configureScene(route){
     if (route.sceneConfig){
       return route.sceneConfig
@@ -50,23 +41,14 @@ class App extends Component {
     return Navigator.SceneConfigs.FloatFromBottomAndroid;
   }
 
-  // navigator renderScene function
   renderScene(route, navigator){
     const routeID = route.id;
-    let MixinComponent;
-    // alert(routeID);
     if (routeID === 'MainPage'){
-      MixinComponent = ApplicationSideMenuHOC(MainPage);
       return <MainPage setDimensions={this._setDimensions.bind(this)} navigator={navigator}/>
     }
-    if (routeID === 'NewDesignPage'){
-      MixinComponent = ApplicationSideMenuHOC(NewDesignPage);
-      return <NewDesignPage width={this.state.width} height={this.state.height} navigator={navigator}/>
-      // return <NewDesignPage width={30} height={60} navigator={navigator}/>
-    }
-    if (routeID === 'AllDesignsPage'){
-      MixinComponent = ApplicationSideMenuHOC(AllDesignsPage);
-      return <AllDesignsPage navigator={navigator}/>
+    if (routeID === 'DesignPage'){
+      return <DesignPage width={this.state.width} height={this.state.height} navigator={navigator}/>
+      // return <DesignPage width={30} height={60} navigator={navigator}/>
     }
   }
 }

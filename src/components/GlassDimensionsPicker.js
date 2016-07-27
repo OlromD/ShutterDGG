@@ -59,7 +59,7 @@ export default class GlassDimensionsPicker extends Component {
     }
     this.props.setDimensions(this.state.width, this.state.height);
     this.props.navigator.push({
-      id : 'NewDesignPage',
+      id : 'DesignPage',
       name: 'constructor'
     });
   }

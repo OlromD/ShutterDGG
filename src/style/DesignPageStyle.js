@@ -15,11 +15,7 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'row'
   },
-  grid : {
-    flex: 3,
-    justifyContent:'center',
-    alignItems: 'center'
-  },
+  
   propsPanel : {
     width: 310,
     overflow: 'visible',
@@ -219,43 +215,6 @@ export default StyleSheet.create({
     height: 40,
     backgroundColor: '#68c6c8',
     borderRadius: 5,
-  },
-  // joystickOKButtonText: {
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   fontSize: 20,
-  //   margin: 5
-  // },
-  // joystickDirectionButtonText : {
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   margin: 5,
-  //   fontSize: 20
-  // },
-  gridContainer: {
-    flex: 1,
-    margin: 10,
-    marginBottom: 0,
-    // backgroundColor: 'red',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  horizontalIndicatorsContainer: {
-    flexDirection: 'row'
-  },
-  verticalIndicatorsContainer: {
-    flexDirection: 'column'
-  },
-  gridIndicator : {
-    backgroundColor: 'yellow',
-    borderColor: '#bbb',
-    borderWidth: 1,
-  },
-  gridCell : {
-    backgroundColor: '#ccc',
-    borderWidth: 1,
-    borderColor: '#bbb',
   },
   leftControlPanel: {
     flex: 1,
