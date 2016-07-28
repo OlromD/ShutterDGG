@@ -17,8 +17,8 @@ import GlassGrid from './grid/GlassGrid';
 import styles from '../style/DesignPageStyle';
 import modalStyles from '../style/DesignPageModalStyle';
 import config from '../config/DesignConfig';
+import { LOGO } from '../config/ApplicationConfig';
 
-const LOGO = require('./img/mainpagelogo.png');
 
 function arrayRowFactory(length){
   const arr = [];

@@ -11,23 +11,8 @@ import {
 
 import GlassDimensionsPicker from './GlassDimensionsPicker.js';
 import styles from '../style/MainPageStyle';
-
-const LOGO = require('./img/mainpagelogo.png'),
-      SOCIAL_ICONS = {
-        twitter : {
-          url : 'https://twitter.com/DreamGlassGroup',
-          img : require('./img/twitter.png')
-        },
-        googlePlus : {
-          url : 'https://plus.google.com/107335644429660129984/posts',
-          img : require('./img/googleplus.png')
-        },
-        facebook : {
-          url : 'https://www.facebook.com/pages/Dream-Glass-Group/225508604187023?fref=ts',
-          img : require('./img/facebook.png')
-        }
-      },
-      DGG_WEBSITE = 'http://dreamglassgroup.com';
+import { SOCIAL_ICONS, DGG_WEBSITE } from '../config/SocialLinksConfig';
+import { LOGO, FIRST_NAME, SECOND_NAME } from '../config/ApplicationConfig';
 
 export default class MainPage extends Component {
   constructor(props){
@@ -44,8 +29,8 @@ export default class MainPage extends Component {
     return (
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.applicationCaption}>DYNAMIC</Text>
-            <Text style={styles.applicationName}>SHUTTER</Text>
+            <Text style={styles.applicationCaption}>{ FIRST_NAME }</Text>
+            <Text style={styles.applicationName}>{ SECOND_NAME }</Text>
             <Text style={[ styles.applicationName, {color: '#fff', fontSize: 20} ]}>BY</Text>
             <Image style={styles.logo} source={LOGO}></Image>
             <Text style={styles.enterDimensionsText}>Choose Dimensions</Text>
