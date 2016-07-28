@@ -8,7 +8,8 @@ import {
   Picker,
   Switch,
   Image,
-  Alert
+  Alert,
+  AsyncStorage,
 } from 'react-native';
 
 import BluetoothSerial from 'react-native-bluetooth-serial'
@@ -18,7 +19,7 @@ import styles from '../style/DesignPageStyle';
 import modalStyles from '../style/DesignPageModalStyle';
 import config from '../config/DesignConfig';
 import { LOGO } from '../config/ApplicationConfig';
-
+import DesignSettingsPanel from './panels/DesignSettingsPanel';
 
 function arrayRowFactory(length){
   const arr = [];
@@ -27,10 +28,10 @@ function arrayRowFactory(length){
   return arr;
 }
 
-function arrayFactory(length){
+function arrayFactory(length, value = null){
   const arr = [];
   for (let i = 0; i< length; i++)
-    arr.push(i);
+    arr.push(value);
   return arr;
 }
 
@@ -41,15 +42,13 @@ let rows,
 
 export default class DesignPage extends Component {
   componentWillMount(){
+    this.prepareGlassData(this.props.width, this.props.height);
     rows = this.props.height / 5;
     cols =  this.props.width / 5;
     cellSize = Math.ceil((Dimensions.get('window').width - 100) / (Math.max(cols, rows) + 1));
+    this.prepareGlassData(this.props.width, this.props.height);
+
     this.state = {
-      modalVisible : false,
-      animationType : "Up > Downward",
-      timeSequence : '0.5',
-      toggleDesign : false,
-      repetitionCycle : '2',
       verticalIndex : -1,
       horizontalIndex: 0,
       verticalIndicators: arrayRowFactory(rows),
@@ -57,13 +56,13 @@ export default class DesignPage extends Component {
       showConfigPanel: false,
       showSelectedDesignsPanel: false,
       showAllDesignsPanel: false,
-      selectedDesigns: config.selectedDesigns,
-      allDesigns: arrayFactory(100),
       bluetoothModalVisibility : false,
       bluetoothDeviceAddress : null,
+      allDesigns: [],
+      selectedDesigns: [],
       devices : [],
-      activeDesignFromAll : undefined,
-      activeDesignFromSelected : undefined,
+      activeDesignFromAll : null,
+      activeDesignFromSelected : null,
       movingSequence : config.movingSequence[0],
       timeSequence : config.timeSequence[0],
       repetitionCycle : config.repetitionCycle[0],
@@ -71,6 +70,7 @@ export default class DesignPage extends Component {
     }
   }
   componentDidMount(){
+
     // Promise.all([
     //   BluetoothSerial.isEnabled(),
     //   BluetoothSerial.list()
@@ -84,6 +84,89 @@ export default class DesignPage extends Component {
     // })
   }
 
+  prepareGlassData(){
+    const { width, height } = this.props;
+    AsyncStorage.getItem('Glass' + width + 'x' + height)
+      .then(value => {
+        let all,
+            selected;
+        if (value === null){
+          selected = arrayFactory(12);
+          all = arrayFactory(100);
+          if (width == '150' && height == '300'){
+            for (let i =0; i < 12; i++){
+              selected[i] = i;
+              all[i] = i;
+            }
+          }
+        } else {
+          selected = JSON.parse(value).selectedDesigns;
+          all = JSON.parse(value).allDesigns;
+        }
+        this.setState({
+          allDesigns: all,
+          selectedDesigns: selected
+        });
+      }).done();
+  }
+  saveGlassData(){
+    const { width, height } = this.props;
+    AsyncStorage.setItem('Glass' + width + 'x' + height, JSON.stringify(
+      {
+        allDesigns: this.state.allDesigns,
+        selectedDesigns: this.state.selectedDesigns
+      }
+    ));
+  }
+
+  initNewDesign(){
+    this.saveGlassData();
+    this.setState({
+      verticalIndex : -1,
+      horizontalIndex: 0,
+      verticalIndicators: arrayRowFactory(rows),
+      horizontalIndicators: arrayRowFactory(cols),
+      showConfigPanel: false,
+      showSelectedDesignsPanel: false,
+      showAllDesignsPanel: false,
+      activeDesignFromAll : null,
+      activeDesignFromSelected : null,
+      movingSequence : config.movingSequence[0],
+      timeSequence : config.timeSequence[0],
+      repetitionCycle : config.repetitionCycle[0],
+      intervalTime : config.intervalTime[0]
+    });
+  }
+
+  saveDesign(){
+    let designs = this.state.allDesigns;
+    designs[designs.indexOf(null)] = designs.indexOf(null);
+    this.setState({
+      allDesigns: designs,
+    });
+    this.saveGlassData();
+    Alert.alert('Your design has been saved!', 'Do you want to create new design or stay on this one?', [
+      {
+        text: 'CLOSE'
+      },
+      {
+        text: 'NEW DESIGN',
+        onPress : this.initNewDesign.bind(this)
+      }
+    ]);
+  }
+  editNewDesign(){
+    Alert.alert('Edit new design', 'Do you want to save current design?', [
+      {
+        text: 'YES',
+        onPress: this.saveDesign.bind(this)
+      },
+      {
+        text: 'NO',
+        onPress : this.initNewDesign.bind(this)
+      }
+    ]);
+  }
   _requestBluetoothActivation(){
     BluetoothSerial.enable()
     .then((res) => {
@@ -96,37 +179,7 @@ export default class DesignPage extends Component {
     this.setState({modalVisible : value});
   }
 
-  _getTimeSequenceTableItems(){
-      return config.timeSequence.map((el) => (
-        <TouchableHighlight
-          style={styles.panelPropTableItem}
-          key={el}
-          onPress={() => this.setState({timeSequence : el})}
-        >
-          <Text style={[styles.panelPropTableItemText, {color: (this.state.timeSequence === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
-        </TouchableHighlight>
-      ));
-  }
-  _getMovingSequenceListItems(){
-    return config.movingSequence.map((el) => (
-      <TouchableHighlight style={styles.panelPropListItem} key={el}
-        onPress={() => this.setState({movingSequence : el})}
-      >
-        <Text style={[styles.panelPropListItemText, {color: (this.state.movingSequence === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
-      </TouchableHighlight>)
-  );
-  }
-  _getRepetitionCycleTableItems(){
-    return config.repetitionCycle.map((el) => (
-      <TouchableHighlight
-        style={styles.panelPropTableItem}
-        key={'interval'+el}
-        onPress={() => this.setState({repetitionCycle: el})}
-      >
-        <Text style={[styles.panelPropTableItemText, {color: (this.state.repetitionCycle === el)?'#68c6c8': '#999', fontWeight: (el === 'n')?'800': '300'}]} key={'interval'+el}>{el}</Text>
-      </TouchableHighlight>
-    ));
-  }
+
   _getIntervalTimeTableItems(){
     return config.intervalTime.map((el) => (
       <TouchableHighlight
@@ -176,19 +229,19 @@ export default class DesignPage extends Component {
           [
             styles.panelPropTableDesignItem,
             {
-              backgroundColor: (el === undefined)? '#ccc': (this.state.activeDesignFromAll === index)?'#69c9c8':'#f3f4f8',
+              backgroundColor: (el === null)? '#ccc': (this.state.activeDesignFromAll === index)?'#69c9c8':'#f3f4f8',
             }
           ]
         }
         key={index}
         onPress={() => {
-          if (el !== undefined)
+          if (el !== null)
             this.setState({
               activeDesignFromAll : index
             })}
         }
       >
-          <Text style={styles.panelPropTableItemText} key={index}>{(el === undefined)?'':((el < 10)?'0': '') + el}</Text>
+          <Text style={styles.panelPropTableItemText} key={index}>{(el === null)?'':((el < 10)?'0': '') + el}</Text>
       </TouchableHighlight>
     ));
   }
@@ -199,18 +252,18 @@ export default class DesignPage extends Component {
         style={[
           styles.panelPropTableItem,
           {
-            backgroundColor: (el === undefined)? '#ccc': (this.state.activeDesignFromSelected === index)?'#69c9c8':'#f3f4f8',
+            backgroundColor: (el === null)? '#ccc': (this.state.activeDesignFromSelected === index)?'#69c9c8':'#f3f4f8',
           }
         ]}
         key={'selected' + index}
         onPress={() => {
-          if (el !== undefined)
+          if (el !== null)
             this.setState({
               activeDesignFromSelected : index
             })}
         }
       >
-        <Text style={styles.panelPropTableItemText} key={'selected' + index}>{(el === undefined)?'':((el < 10)?'0': '') + el}</Text>
+        <Text style={styles.panelPropTableItemText} key={'selected' + index}>{(el === null)?'':((el < 10)?'0': '') + el}</Text>
       </TouchableHighlight>
     ));
   }
@@ -301,7 +354,7 @@ export default class DesignPage extends Component {
   deleteDesignsFromAll(){
     let designs = this.state.allDesigns,
         index = this.state.activeDesignFromAll;
-    if (index === undefined)
+    if (index === null)
       return;
     Alert.alert(
       'Confirm deletion',
@@ -313,20 +366,22 @@ export default class DesignPage extends Component {
         {
           text: 'YES',
           onPress : () => {
-            designs[index] = undefined;
+            designs[index] = null;
             this.setState({
               allDesigns : designs,
-              activeDesignFromAll : undefined
+              activeDesignFromAll : null
             });
+            this.saveGlassData();
           }
         }
       ]
     );
+
   }
   deleteDesignsFromSelected(){
     let designs = this.state.selectedDesigns,
         index = this.state.activeDesignFromSelected;
-    if (index === undefined)
+    if (index === null)
       return;
     Alert.alert(
       'Confirm deletion',
@@ -338,11 +393,12 @@ export default class DesignPage extends Component {
         {
           text: 'YES',
           onPress : () => {
-            designs[index] = undefined;
+            designs[index] = null;
             this.setState({
               selectedDesigns : designs,
-              activeDesignFromSelected : undefined
+              activeDesignFromSelected : null
             });
+            this.saveGlassData();
           }
         }
       ]
@@ -352,9 +408,9 @@ export default class DesignPage extends Component {
   moveDesignToSelected(){
     let index = this.state.activeDesignFromAll,
         designs = this.state.selectedDesigns;
-    if (index === undefined)
+    if (index === null)
       return;
-    if (designs.indexOf(undefined) === -1){
+    if (designs.indexOf(null) === -1){
       Alert.alert(
         'Oops...',
         'You are able to add only 12 designs to selected. Remove one from selected and try again.',
@@ -378,10 +434,10 @@ export default class DesignPage extends Component {
       );
       return;
     }
-    designs[designs.indexOf(undefined)] = index;
+    designs[designs.indexOf(null)] = index;
     this.setState({
       selectedDesigns: designs,
-      activeDesignFromAll : undefined
+      activeDesignFromAll : null
     });
     Alert.alert(
       'Congratulations!',
@@ -392,47 +448,12 @@ export default class DesignPage extends Component {
         }
       ]
     );
+    this.saveGlassData();
   }
 
   render(){
 
-    const configPanel = (
-      <View style={styles.panel}>
-        <View style={styles.panelHeader}>
-          <TouchableHighlight style={styles.buttonRounded} onPress={() => this._setConfigPanelVisibility.bind(this)(false)}>
-            <Text style={styles.buttonRoundedText}>&or;</Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.panelBody}>
-          <View style={styles.panelTitle}>
-            <Text style={[styles.panelTitleText, {width: 500, marginLeft: 20}]}>Movement & Time Sequence of a Single Design</Text>
-          </View>
-          <View style={styles.panelPropsContainer}>
-            <View style={styles.panelPropTitle}>
-              <Text style={styles.titleCaret}>&or;</Text>
-              <Text style={styles.panelPropTitleText}>Moving Sequences</Text>
-            </View>
-            <View style={styles.panelPropList}>
-              { this._getMovingSequenceListItems() }
-            </View>
-            <View style={styles.panelPropTitle}>
-              <Text style={styles.titleCaret}>&or;</Text>
-              <Text style={styles.panelPropTitleText}>Time Sequences (Second)</Text>
-            </View>
-            <View style={styles.panelPropTable}>
-              { this._getTimeSequenceTableItems() }
-            </View>
-            <View style={styles.panelPropTitle}>
-              <Text style={styles.titleCaret}>&or;</Text>
-              <Text style={styles.panelPropTitleText}>Repetition Cycle in Single Design</Text>
-            </View>
-            <View style={styles.panelPropTable}>
-              { this._getRepetitionCycleTableItems() }
-            </View>
-          </View>
-        </View>
-      </View>
-    ),
+    const configPanel = DesignSettingsPanel,
     selectedDesignsPanel = (
       <View style={[styles.panel, {height: 500, flex: 0}]}>
         <View style={[styles.panelHeader, {flexDirection: 'row', justifyContent: 'space-between'}]}>
@@ -567,7 +588,10 @@ export default class DesignPage extends Component {
               cellSize={cellSize}
             />
             <View style={styles.propsPanel}>
-              { this.state.showConfigPanel && configPanel}
+              <DesignSettingsPanel
+                visible={this.state.showConfigPanel}
+                onClose={()=> this.setState({showConfigPanel : false})}
+              />
               { this.state.showSelectedDesignsPanel && selectedDesignsPanel}
               { this.state.showAllDesignsPanel && allDesignsPanel}
             </View>
@@ -601,12 +625,16 @@ export default class DesignPage extends Component {
             <View style={{flex: 1, flexDirection: 'row'}}>
               <View style={{flex: 1, flexDirection: 'column'}}>
                 <View style={{flex: 2, justifyContent: 'flex-end', alignItems: 'center'}}>
-                  <TouchableHighlight style={styles.editNewDesignButton}>
+                  <TouchableHighlight style={styles.editNewDesignButton}
+                    onPress={this.editNewDesign.bind(this)}
+                  >
                     <Text style={{color: '#fff', fontSize: 15, textAlign: 'center'}}>Edit New Design</Text>
                   </TouchableHighlight>
                 </View>
                 <View style={{flex: 3, flexDirection: 'row', justifyContent: 'center'}}>
-                  <TouchableHighlight style={styles.rightPanelActionButton}>
+                  <TouchableHighlight style={styles.rightPanelActionButton}
+                    onPress={this.saveDesign.bind(this)}
+                  >
                     <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>Save & Load</Text>
                   </TouchableHighlight>
                   <TouchableHighlight style={styles.rightPanelActionButton}
