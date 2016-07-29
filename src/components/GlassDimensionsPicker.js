@@ -13,7 +13,8 @@ export default class GlassDimensionsPicker extends Component {
   componentWillMount(){
     this.state = {
       width: '',
-      height: ''
+      height: '',
+      buttonText: 'CONFIRM'
     }
     widthOptions = this._getWidthDimensionPickerValues();
     heightOptions = this._getHeightDimensionPickerValues();
@@ -47,7 +48,7 @@ export default class GlassDimensionsPicker extends Component {
           </Picker>
         </View>
         <TouchableHighlight style={styles.confirmButton} onPress={this._confirmButtonPress.bind(this)}>
-          <Text style={styles.confirmButtonText}>CONFIRM</Text>
+          <Text style={styles.confirmButtonText}>{this.state.buttonText}</Text>
         </TouchableHighlight>
       </View>
     );
@@ -57,10 +58,15 @@ export default class GlassDimensionsPicker extends Component {
       Alert.alert('Dimensions are not selected!', 'Please, choose width and height of your Dream Glass from the select boxes.', [{text: 'GOT IT!'}]);
       return;
     }
-    this.props.setDimensions(this.state.width, this.state.height);
-    this.props.navigator.push({
-      id : 'DesignPage',
-      name: 'constructor'
+    this.setState({
+      buttonText: 'LOADING...'
     });
+    this.props.setDimensions(this.state.width, this.state.height);
+    setTimeout(() => {
+      this.props.navigator.push({
+        id : 'DesignPage',
+        name: 'constructor'
+      });
+    },100);
   }
 }
