@@ -4,9 +4,9 @@ import {
   View
 } from 'react-native';
 
-import MainPage from './components/MainPage';
-import DesignPage from './components/DesignPage';
-import styles from './style/ApplicationStyle.js';
+import MainPage from '../components/MainPage';
+import DesignPage from '../components/DesignPage';
+import styles from '../style/ApplicationStyle.js';
 
 export default class App extends Component {
   componentDidMount(){
