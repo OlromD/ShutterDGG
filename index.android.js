@@ -4,12 +4,4 @@ import {
 } from 'react-native';
 import App from './src/containers/App.js';
 
-class ShutterDGGApp extends Component {
-  render(){
-    return (
-      <App/>
-    );
-  }
-}
-
-AppRegistry.registerComponent('ShutterDGG', () => ShutterDGGApp);
+AppRegistry.registerComponent('ShutterDGG', () => App);
