@@ -194,11 +194,6 @@ export default class DesignPage extends Component {
       </TouchableHighlight>
     ));
   }
-  _saveDesign(){
-    this.props.navigator.push({
-      id: 'AllDesignsPage'
-    });
-  }
 
   _hideAllPanels(){
     this.setState({
@@ -240,7 +235,7 @@ export default class DesignPage extends Component {
         onPress={() => {
           if (el !== null)
             this.setState({
-              activeDesignFromAll : index
+              activeDesignFromAll : index,
             })}
         }
       >
@@ -580,7 +575,6 @@ export default class DesignPage extends Component {
       </Modal>
         <View style={styles.constructorContainer}>
           <View style={styles.constructor}>
-
             <GlassGrid
               rows={rows}
               cols={cols}
@@ -679,7 +673,6 @@ export default class DesignPage extends Component {
                     <Text style={{color: '#fff', fontSize: 24, textAlign: 'center'}}>&or;</Text>
                   </TouchableHighlight>
                 </View>
-
               </View>
             </View>
           </View>
