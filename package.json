@@ -9,10 +9,6 @@
     "react": "15.3.0",
     "react-native": "0.30.0",
     "react-native-bluetooth-serial": "0.0.2",
-    "react-native-dropdown": "0.0.6",
-    "react-native-list-popover": "^1.0.5",
-    "react-native-selectme": "^1.2.0",
-    "react-native-side-menu": "^0.20.0",
     "react-redux": "^4.4.5",
     "redux": "^3.5.2"
   }
