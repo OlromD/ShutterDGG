@@ -21,18 +21,12 @@ import config from '../config/DesignConfig';
 import { LOGO } from '../config/ApplicationConfig';
 import DesignSettingsPanel from './panels/DesignSettingsPanel';
 
-function arrayRowFactory(length){
-  const arr = [];
-  for (let i = 0; i< length; i++)
-    arr.push(0);
-  return arr;
+function arrayRowFactory(length, value = 0) {
+  return new Array(length).fill(value);
 }
 
-function arrayFactory(length, value = null){
-  const arr = [];
-  for (let i = 0; i< length; i++)
-    arr.push(value);
-  return arr;
+function id(width, height) {
+ return `Glass${width}x${height}`;
 }
 
 const PickerItem = Picker.Item;
@@ -42,10 +36,14 @@ let rows,
 
 export default class DesignPage extends Component {
   componentWillMount(){
-    this.prepareGlassData(this.props.width, this.props.height);
-    rows = this.props.height / 5;
-    cols =  this.props.width / 5;
-    cellSize = Math.ceil((Dimensions.get('window').width - 100) / (Math.max(cols, rows) + 1));
+    const PADDING = 100;
+    const CELL_DIMENSION = 5;
+
+    rows = this.props.height / CELL_DIMENSION;
+    cols =  this.props.width / CELL_DIMENSION;
+
+
+    cellSize = Math.ceil((Dimensions.get('window').width - PADDING) / (Math.max(cols, rows) + 1));
     this.prepareGlassData(this.props.width, this.props.height);
 
     this.state = {
@@ -86,15 +84,20 @@ export default class DesignPage extends Component {
 
   prepareGlassData(){
     const { width, height } = this.props;
-    AsyncStorage.getItem('Glass' + width + 'x' + height)
+    AsyncStorage.getItem(id(width, height))
       .then(value => {
         let all,
             selected;
         if (value === null){
-          selected = arrayFactory(12);
-          all = arrayFactory(100);
-          if (width == '150' && height == '300'){
-            for (let i =0; i < 12; i++){
+          const MAX_SELECTED_DESIGN_NUMBER = 12;
+          const MAX_DESIGN_NUMBER = 100;
+
+          selected = arrayRowFactory(MAX_SELECTED_DESIGN_NUMBER, null);
+          all = arrayRowFactory(MAX_DESIGN_NUMBER, null);
+
+          const supportStandardDesign = width === '150' && height === '300';
+          if (supportStandardDesign){
+            for (let i = 0; i < MAX_SELECTED_DESIGN_NUMBER; i++){
               selected[i] = i;
               all[i] = i;
             }
@@ -111,7 +114,7 @@ export default class DesignPage extends Component {
   }
   saveGlassData(){
     const { width, height } = this.props;
-    AsyncStorage.setItem('Glass' + width + 'x' + height, JSON.stringify(
+    AsyncStorage.setItem(id(width, height), JSON.stringify(
       {
         allDesigns: this.state.allDesigns,
         selectedDesigns: this.state.selectedDesigns
