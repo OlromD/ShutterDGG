@@ -21,6 +21,7 @@ import config from '../config/DesignConfig';
 import { LOGO } from '../config/ApplicationConfig';
 import { STANDARD_DESIGNS } from '../config/StandardDesignsConfig';
 import DesignSettingsPanel from './panels/DesignSettingsPanel';
+import SelectedDesignsPanel from './panels/SelectedDesignsPanel';
 import { Design, DESIGN_INDICATOR_TYPES, toggleDesignIndicator }  from '../models/Design';
 function arrayRowFactory(length, value = 0) {
   return new Array(length).fill(value);
@@ -197,19 +198,6 @@ export default class DesignPage extends Component {
     this.setState({modalVisible : value});
   }
 
-
-  _getIntervalTimeTableItems(){
-    return config.intervalTime.map((el) => (
-      <TouchableHighlight
-        style={styles.panelPropTableItem}
-        key={el}
-        onPress={() => this.setState({intervalTime : el})}
-      >
-        <Text style={[styles.panelPropTableItemText, {color: (this.state.intervalTime === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
-      </TouchableHighlight>
-    ));
-  }
-
   _hideAllPanels(){
     this.setState({
       showConfigPanel: false,
@@ -263,27 +251,6 @@ export default class DesignPage extends Component {
     ));
   }
 
-  _getSelectedDesignsTable(){
-    return this.state.selectedDesigns.map((el, index) => (
-      <TouchableHighlight
-        style={[
-          styles.panelPropTableItem,
-          {
-            backgroundColor: (el === null)? '#ccc': (this.state.activeDesignFromSelected === index)?'#69c9c8':'#f3f4f8',
-          }
-        ]}
-        key={'selected' + index}
-        onPress={() => {
-          if (el !== null)
-            this.setState({
-              activeDesignFromSelected : index
-            })}
-        }
-      >
-        <Text style={styles.panelPropTableItemText} key={'selected' + index}>{(el === null)?'':((el < 10)?'0': '') + el}</Text>
-      </TouchableHighlight>
-    ));
-  }
 
 
   _setBluetoothModalVisibility(value){
@@ -395,31 +362,12 @@ export default class DesignPage extends Component {
     );
 
   }
-  deleteDesignsFromSelected(){
-    let designs = this.state.selectedDesigns,
-        index = this.state.activeDesignFromSelected;
-    if (index === null)
-      return;
-    Alert.alert(
-      'Confirm deletion',
-      'Do you want to delete this design from selected designs?',
-      [
-        {
-          text: 'NO'
-        },
-        {
-          text: 'YES',
-          onPress : () => {
-            designs[index] = null;
-            this.setState({
-              selectedDesigns : designs,
-              activeDesignFromSelected : null
-            });
-            this.saveGlassData();
-          }
-        }
-      ]
-    );
+  deleteDesignsFromSelected(designs){
+    this.setState({
+      selectedDesigns: designs,
+      activeDesignFromSelected: null
+    });
+    this.saveGlassData();
   }
 
   moveDesignToSelected(){
@@ -467,44 +415,12 @@ export default class DesignPage extends Component {
     this.saveGlassData();
   }
 
-  render(){
 
-    const configPanel = DesignSettingsPanel,
-    selectedDesignsPanel = (
-      <View style={[styles.panel, {height: 500, flex: 0}]}>
-        <View style={[styles.panelHeader, {flexDirection: 'row', justifyContent: 'space-between'}]}>
-          <TouchableHighlight style={styles.buttonRectangle}
-            onPress={() => this._showSelectedDesignsPanelVisibility.bind(this)(false)}
-          >
-            <Text style={styles.buttonRectangleText}>&or;</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.buttonRectangle} onPress={this.deleteDesignsFromSelected.bind(this)}>
-            <Text style={styles.buttonRectangleText}>&#10005;</Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.panelBody}>
-          <View style={styles.panelTitle}>
-            <Text style={[styles.panelTitleText, {width: 300, marginLeft: -3}]}>Movement & Time Sequence in Multiple Designs</Text>
-          </View>
-          <View style={styles.panelPropsContainer}>
-            <View style={styles.panelPropTitle}>
-              <Text style={[styles.titleCaret, {width: 40}]}>&or;</Text>
-              <Text style={[styles.panelPropTitleText, {fontSize: 20}]}>Choose/Change up to 12 designs</Text>
-            </View>
-            <View style={styles.panelPropTable}>
-              { this._getSelectedDesignsTable() }
-            </View>
-            <View style={styles.panelPropTitle}>
-              <Text style={[styles.titleCaret, {width: 40}]}>&or;</Text>
-              <Text style={[styles.panelPropTitleText, {fontSize: 20}]}>Interval Time within Designs in Second(s)</Text>
-            </View>
-            <View style={styles.panelPropTable}>
-              { this._getIntervalTimeTableItems() }
-            </View>
-          </View>
-        </View>
-      </View>
-    ),
+  setActiveDesignFromSelected(index){
+    this.setState({ activeDesignFromSelected : index })
+  }
+
+  render(){
     allDesignsPanel = (
       <View style={styles.panel}>
         <View style={[styles.panelHeader, {flexDirection: 'row', justifyContent: 'space-between'}]}>
@@ -603,10 +519,17 @@ export default class DesignPage extends Component {
             />
             <View style={styles.propsPanel}>
               <DesignSettingsPanel
-                visible={this.state.showConfigPanel}
-                onClose={()=> this.setState({showConfigPanel : false})}
+                visible = { this.state.showConfigPanel }
+                onClose = { ()=> this.setState({showConfigPanel : false}) }
               />
-              { this.state.showSelectedDesignsPanel && selectedDesignsPanel}
+              <SelectedDesignsPanel
+                visible = { this.state.showSelectedDesignsPanel }
+                onClose = { () => this.setState({ showSelectedDesignsPanel : false})}
+                onDesignItemPress = { index => this.setState({ activeDesignFromSelected : index}) }
+                designs = { this.state.selectedDesigns }
+                onDesignItemDelete = { this.deleteDesignsFromSelected.bind(this) }
+                active = { this.state.activeDesignFromSelected }
+              />
               { this.state.showAllDesignsPanel && allDesignsPanel}
             </View>
           </View>
