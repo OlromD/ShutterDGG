@@ -24,6 +24,9 @@ import DesignSettingsPanel from './panels/DesignSettingsPanel';
 import SelectedDesignsPanel from './panels/SelectedDesignsPanel';
 import AllDesignsPanel from './panels/AllDesignsPanel';
 import { Design, DESIGN_INDICATOR_TYPES, toggleDesignIndicator }  from '../models/Design';
+import Joystick from './Joystick';
+
+
 function arrayRowFactory(length, value = 0) {
   return new Array(length).fill(value);
 }
@@ -112,10 +115,8 @@ export default class DesignPage extends Component {
           // for standart designs
           const supportStandardDesign = width === '150' && height === '300';
           if (supportStandardDesign){
-            for (let i = 0; i < MAX_SELECTED_DESIGN_NUMBER; i++){
-              selected[i] = null;
-            }
-            all = STANDARD_DESIGNS;
+            selected = arrayRowFactory(MAX_SELECTED_DESIGN_NUMBER, null);
+            all = STANDARD_DESIGNS.concat(arrayRowFactory(MAX_DESIGN_NUMBER - STANDARD_DESIGNS.length, null));
           }
         } else {
           selected = JSON.parse(value).selectedDesigns;
@@ -454,18 +455,20 @@ export default class DesignPage extends Component {
             <View style={styles.propsPanel}>
               <DesignSettingsPanel
                 visible = { this.state.showConfigPanel }
-                onClose = { () => this.setState({showConfigPanel : false}) }
+                onClose = { () => this._setConfigPanelVisibility.bind(this)(false) }
+                onDesignChange = { design => this.setState({ currentDesign : design})}
+                design = { this.state.currentDesign }
               />
               <SelectedDesignsPanel
                 visible = { this.state.showSelectedDesignsPanel }
-                onClose = { () => this.setState({ showSelectedDesignsPanel : false})}
+                onClose = { () => this._showSelectedDesignsPanelVisibility.bind(this)(false)}
                 onDesignItemPress = { index => this.setState({ activeDesignFromSelected : index}) }
                 designs = { this.state.selectedDesigns }
                 onDesignItemDelete = { this.deleteDesignsFromSelected.bind(this) }
                 active = { this.state.activeDesignFromSelected }
               />
               <AllDesignsPanel
-                onClose = { () => this.setState({ showAllDesignsPanel : false }) }
+                onClose = { () => this._showAllDesignsPanelVisibility.bind(this)(false) }
                 active = { this.state.activeDesignFromAll }
                 designs = { this.state.allDesigns }
                 onDesignItemPress = { this.onAllDesignsItemPress.bind(this) }
@@ -523,39 +526,13 @@ export default class DesignPage extends Component {
                   </TouchableHighlight>
                 </View>
               </View>
-              <View style={{flex: 1, flexDirection: 'column'}}>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                  <TouchableHighlight style={styles.joystickDirectionButton}
-                    onPress={this._moveUp.bind(this)}
-                  >
-                    <Text style={{color: '#fff', fontSize: 24, textAlign: 'center'}}>&and;</Text>
-                  </TouchableHighlight>
-                </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                  <TouchableHighlight style={styles.joystickDirectionButton}
-                    onPress={this._moveLeft.bind(this)}
-                  >
-                    <Text style={{color: '#fff', fontSize: 24, textAlign: 'center'}}>&lt;</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight style={[styles.joystickDirectionButton, {backgroundColor: 'transparent'}]}
-                    onPress={this._OKButtonPress.bind(this)}
-                  >
-                    <Text style={{color: '#fff', fontSize: 24, textAlign: 'center'}}>OK</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight style={styles.joystickDirectionButton}
-                    onPress={this._moveRight.bind(this)}
-                  >
-                    <Text style={{color: '#fff', fontSize: 24, textAlign: 'center'}}>&gt;</Text>
-                  </TouchableHighlight>
-                </View>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                  <TouchableHighlight style={styles.joystickDirectionButton}
-                    onPress={this._moveDown.bind(this)}
-                  >
-                    <Text style={{color: '#fff', fontSize: 24, textAlign: 'center'}}>&or;</Text>
-                  </TouchableHighlight>
-                </View>
-              </View>
+              <Joystick
+                onUpButtonPress = { this._moveUp.bind(this) }
+                onDownButtonPress = { this._moveDown.bind(this) }
+                onLeftButtonPress = { this._moveLeft.bind(this) }
+                onRightButtonPress = { this._moveRight.bind(this) }
+                onOKButtonPress = { this._OKButtonPress.bind(this) }
+              />
             </View>
           </View>
         </View>
@@ -593,7 +570,6 @@ export default class DesignPage extends Component {
     const index = this.state.verticalIndex;
     let design = this.state.currentDesign;
     toggleDesignIndicator(design, DESIGN_INDICATOR_TYPES.VERTICAL, index);
-
     this.setState({
       currentDesign : design
     });
@@ -653,12 +629,5 @@ export default class DesignPage extends Component {
       });
     }
 
-  }
-
-
-  onActionSelected( position) {
-    if (position === 0) { // index of 'Settings'
-      showSettings();
-    }
   }
 }

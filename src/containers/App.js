@@ -57,7 +57,6 @@ export default class App extends Component {
      }
      if (routeID === 'DesignPage'){
        return <DesignPage width={this.state.width} height={this.state.height} navigator={navigator}/>
-       // return <DesignPage width={180} height={360} navigator={navigator}/>
     }
   }
 }

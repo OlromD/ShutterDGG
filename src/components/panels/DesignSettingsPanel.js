@@ -11,42 +11,55 @@ export default class DesignSettingsPanel extends Component {
   constructor(props){
     super(props);
   }
-  componentWillMount(){
-    this.setState({
-      movingSequence : config.movingSequence[0],
-      timeSequence : config.timeSequence[0],
-      repetitionCycle : config.repetitionCycle[0],
-    });
-  }
 
   _getTimeSequenceTableItems(){
+      const { design, onDesignChange } = this.props;
       return config.timeSequence.map((el) => (
         <TouchableHighlight
-          style={styles.panelPropTableItem}
-          key={el}
-          onPress={() => this.setState({timeSequence : el})}
+          style = { styles.panelPropTableItem }
+          key = { el }
+          onPress = { () => onDesignChange(Object.assign({}, design, { time : el }))}
         >
-          <Text style={[styles.panelPropTableItemText, {color: (this.state.timeSequence === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
+          <Text
+            style = { [styles.panelPropTableItemText, {color: (design.time === el)?'#68c6c8': '#999'}] }
+            key = { el }
+          >
+            { el }
+          </Text>
         </TouchableHighlight>
       ));
   }
   _getMovingSequenceListItems(){
+    const { design, onDesignChange } = this.props;
     return config.movingSequence.map((el) => (
-      <TouchableHighlight style={styles.panelPropListItem} key={el}
-        onPress={() => this.setState({movingSequence : el})}
+      <TouchableHighlight
+        style = { styles.panelPropListItem }
+        key = { el }
+        onPress = { () => onDesignChange(Object.assign({}, design, { animationType : el }))}
       >
-        <Text style={[styles.panelPropListItemText, {color: (this.state.movingSequence === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
+        <Text
+          style = { [styles.panelPropListItemText, {color: (design.animationType === el)?'#68c6c8': '#999'}] }
+          key = { el }
+        >
+          { el }
+        </Text>
       </TouchableHighlight>)
   );
   }
   _getRepetitionCycleTableItems(){
+    const { design, onDesignChange } = this.props;
     return config.repetitionCycle.map((el) => (
       <TouchableHighlight
-        style={styles.panelPropTableItem}
-        key={'interval'+el}
-        onPress={() => this.setState({repetitionCycle: el})}
+        style = { styles.panelPropTableItem }
+        key = { el }
+        onPress = { () => onDesignChange(Object.assign({}, design, { repetitionNumber : el }))}
       >
-        <Text style={[styles.panelPropTableItemText, {color: (this.state.repetitionCycle === el)?'#68c6c8': '#999', fontWeight: (el === 'n')?'800': '300'}]} key={'interval'+el}>{el}</Text>
+        <Text
+          style = { [styles.panelPropTableItemText, {color: (design.repetitionNumber === el)?'#68c6c8': '#999', fontWeight: (el === 'n')?'800': '300'}] }
+          key = { el }
+        >
+          { el }
+        </Text>
       </TouchableHighlight>
     ));
   }
@@ -54,14 +67,12 @@ export default class DesignSettingsPanel extends Component {
   render(){
     const { visible, onClose } = this.props;
     if (!visible)
-      return (
-        <View></View>
-      );
+      return false;
     return (
       <View style={styles.panel}>
         <View style={styles.panelHeader}>
           <TouchableHighlight style={styles.buttonRounded}
-            onPress={onClose}
+            onPress = { onClose }
           >
             <Text style={styles.buttonRoundedText}>&or;</Text>
           </TouchableHighlight>
