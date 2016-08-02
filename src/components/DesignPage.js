@@ -86,18 +86,17 @@ export default class DesignPage extends Component {
 
   }
   componentDidMount(){
-
-    // Promise.all([
-    //   BluetoothSerial.isEnabled(),
-    //   BluetoothSerial.list()
-    // ])
-    // .then((values) => {
-    //   const [ isEnabled, devices ] = values
-    //   this.setState({ isEnabled, devices })
-    //   if (!this.state.isEnabled){
-    //     this._requestBluetoothActivation();
-    //   }
-    // })
+    Promise.all([
+      BluetoothSerial.isEnabled(),
+      BluetoothSerial.list()
+    ])
+    .then((values) => {
+      const [ isEnabled, devices ] = values
+      this.setState({ isEnabled, devices })
+      if (!this.state.isEnabled){
+        this._requestBluetoothActivation();
+      }
+    })
   }
 
   prepareGlassData(){
@@ -112,7 +111,7 @@ export default class DesignPage extends Component {
 
           selected = arrayRowFactory(MAX_SELECTED_DESIGN_NUMBER, null);
           all = arrayRowFactory(MAX_DESIGN_NUMBER, null);
-          // for standart designs
+          
           const supportStandardDesign = width === '150' && height === '300';
           if (supportStandardDesign){
             selected = arrayRowFactory(MAX_SELECTED_DESIGN_NUMBER, null);
