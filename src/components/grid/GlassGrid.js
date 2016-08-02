@@ -15,28 +15,29 @@ export default class GlassGrid extends Component {
   }
 
   render(){
-    const { rows, cols, cellSize, horizontalIndicators, verticalIndicators, horizontalIndex, verticalIndex } = this.props;
+    const { rows, cols, cellSize, horizontalIndex, verticalIndex } = this.props;
+    const { indicators } = this.props.design;
     return (
       <View style = { styles.grid }>
         <View style = { styles.gridContainer }>
           <View style = { { flexDirection: 'column', alignItems: 'center', justifyContent: 'center' } }>
             <HorizontalIndicators
               cols = { cols }
-              horizontalIndicators = { horizontalIndicators }
+              horizontalIndicators = { indicators.horizontal }
               cellSize = { cellSize }
               horizontalIndex = { horizontalIndex }
             />
             <Grid
               cellSize = { cellSize }
-              verticalIndicators = { verticalIndicators }
-              horizontalIndicators = { horizontalIndicators }
+              verticalIndicators = { indicators.vertical }
+              horizontalIndicators = { indicators.horizontal }
             />
           </View>
           <VerticalIndicators
             rows = { rows }
             cellSize = { cellSize }
             verticalIndex = { verticalIndex }
-            verticalIndicators = { verticalIndicators }
+            verticalIndicators = { indicators.vertical }
           />
         </View>
       </View>

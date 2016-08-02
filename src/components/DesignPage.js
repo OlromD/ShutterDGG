@@ -19,8 +19,9 @@ import styles from '../style/DesignPageStyle';
 import modalStyles from '../style/DesignPageModalStyle';
 import config from '../config/DesignConfig';
 import { LOGO } from '../config/ApplicationConfig';
+import { STANDARD_DESIGNS } from '../config/StandardDesignsConfig';
 import DesignSettingsPanel from './panels/DesignSettingsPanel';
-
+import { Design, DESIGN_INDICATOR_TYPES }  from '../models/Design';
 function arrayRowFactory(length, value = 0) {
   return new Array(length).fill(value);
 }
@@ -32,10 +33,12 @@ function id(width, height) {
 const PickerItem = Picker.Item;
 let rows,
     cols,
-    cellSize;
+    cellSize,
+    design;
 
 export default class DesignPage extends Component {
   componentWillMount(){
+
     const PADDING = 100;
     const CELL_DIMENSION = 5;
 
@@ -45,12 +48,23 @@ export default class DesignPage extends Component {
 
     cellSize = Math.ceil((Dimensions.get('window').width - PADDING) / (Math.max(cols, rows) + 1));
     this.prepareGlassData(this.props.width, this.props.height);
+    design  = new Design({
+      horizontal : arrayRowFactory(cols),
+      vertical : arrayRowFactory(rows),
+    },
+    config.movingSequence[0],
+    config.repetitionCycle[0],
+    config.timeSequence[0]
+    );
 
     this.state = {
       verticalIndex : -1,
       horizontalIndex: 0,
-      verticalIndicators: arrayRowFactory(rows),
-      horizontalIndicators: arrayRowFactory(cols),
+      currentDesign : new Design( { horizontal : arrayRowFactory(cols), vertical : arrayRowFactory(rows), },
+        config.movingSequence[0],
+        config.repetitionCycle[0],
+        config.timeSequence[0]
+      ),
       showConfigPanel: false,
       showSelectedDesignsPanel: false,
       showAllDesignsPanel: false,
@@ -61,11 +75,10 @@ export default class DesignPage extends Component {
       devices : [],
       activeDesignFromAll : null,
       activeDesignFromSelected : null,
-      movingSequence : config.movingSequence[0],
-      timeSequence : config.timeSequence[0],
-      repetitionCycle : config.repetitionCycle[0],
+
       intervalTime : config.intervalTime[0]
     }
+
   }
   componentDidMount(){
 
@@ -94,13 +107,13 @@ export default class DesignPage extends Component {
 
           selected = arrayRowFactory(MAX_SELECTED_DESIGN_NUMBER, null);
           all = arrayRowFactory(MAX_DESIGN_NUMBER, null);
-
+          // for standart designs
           const supportStandardDesign = width === '150' && height === '300';
           if (supportStandardDesign){
             for (let i = 0; i < MAX_SELECTED_DESIGN_NUMBER; i++){
-              selected[i] = i;
-              all[i] = i;
+              selected[i] = null;
             }
+            all = STANDARD_DESIGNS;
           }
         } else {
           selected = JSON.parse(value).selectedDesigns;
@@ -127,23 +140,23 @@ export default class DesignPage extends Component {
     this.setState({
       verticalIndex : -1,
       horizontalIndex: 0,
-      verticalIndicators: arrayRowFactory(rows),
-      horizontalIndicators: arrayRowFactory(cols),
+      currentDesign : new Design( { horizontal : arrayRowFactory(cols), vertical : arrayRowFactory(rows), },
+        config.movingSequence[0],
+        config.repetitionCycle[0],
+        config.timeSequence[0]
+      ),
       showConfigPanel: false,
       showSelectedDesignsPanel: false,
       showAllDesignsPanel: false,
       activeDesignFromAll : null,
       activeDesignFromSelected : null,
-      movingSequence : config.movingSequence[0],
-      timeSequence : config.timeSequence[0],
-      repetitionCycle : config.repetitionCycle[0],
       intervalTime : config.intervalTime[0]
     });
   }
 
   saveDesign(){
     let designs = this.state.allDesigns;
-    designs[designs.indexOf(null)] = designs.indexOf(null);
+    designs[designs.indexOf(null)] = Object.assign({}, this.state.currentDesign);
     this.setState({
       allDesigns: designs,
     });
@@ -233,13 +246,15 @@ export default class DesignPage extends Component {
         }
         key={index}
         onPress={() => {
+          const designs = this.state.allDesigns;
           if (el !== null)
             this.setState({
               activeDesignFromAll : index,
+              currentDesign : designs[index]
             })}
         }
       >
-          <Text style={styles.panelPropTableItemText} key={index}>{(el === null)?'':((el < 10)?'0': '') + el}</Text>
+          <Text style={styles.panelPropTableItemText} key={index}>{(el === null)?'':((index < 10)?'0': '') + index}</Text>
       </TouchableHighlight>
     ));
   }
@@ -578,8 +593,7 @@ export default class DesignPage extends Component {
             <GlassGrid
               rows={rows}
               cols={cols}
-              verticalIndicators={this.state.verticalIndicators}
-              horizontalIndicators={this.state.horizontalIndicators}
+              design = { this.state.currentDesign }
               verticalIndex={this.state.verticalIndex}
               horizontalIndex={this.state.horizontalIndex}
               cellSize={cellSize}
@@ -709,20 +723,19 @@ export default class DesignPage extends Component {
   }
   _changeVerticalIndicatorValue(){
     const index = this.state.verticalIndex;
-    let indicators = [].concat(this.state.verticalIndicators);
-    const val = indicators[index];
-    indicators[index] = val === 0? 1: 0;
+    let design = this.state.currentDesign;
+    design.toggleIndicator('vertical', index);
+
     this.setState({
-      verticalIndicators : indicators
+      currentDesign : design
     });
   }
   _changeHorizontalIndicatorValue(){
     const index = this.state.horizontalIndex;
-    let indicators = [].concat(this.state.horizontalIndicators);
-    const val = indicators[index];
-    indicators[index] = val === 0? 1: 0;
+    let design = this.state.currentDesign;
+    design.toggleIndicator('horizontal', index);
     this.setState({
-      horizontalIndicators : indicators
+      currentDesign : design
     });
   }
 

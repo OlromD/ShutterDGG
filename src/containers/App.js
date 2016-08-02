@@ -51,14 +51,13 @@ export default class App extends Component {
   }
 
   navigatorRenderScene(route, navigator){
-    const routeID = route.id,
-          Component = navigationConfig[routeID];
-
-    return (<Component
-                setDimensions = { this._setDimensions.bind(this) }
-                navigator = { navigator }
-                width = { this.state.width }
-                height = { this.state.height }
-            />);
+    const routeID = route.id;
+    if (routeID === 'MainPage'){
+      return <MainPage setDimensions={this._setDimensions.bind(this)} navigator={navigator}/>
+     }
+     if (routeID === 'DesignPage'){
+       return <DesignPage width={this.state.width} height={this.state.height} navigator={navigator}/>
+       // return <DesignPage width={180} height={360} navigator={navigator}/>
+    }
   }
 }
