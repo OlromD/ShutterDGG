@@ -22,6 +22,7 @@ import { LOGO } from '../config/ApplicationConfig';
 import { STANDARD_DESIGNS } from '../config/StandardDesignsConfig';
 import DesignSettingsPanel from './panels/DesignSettingsPanel';
 import SelectedDesignsPanel from './panels/SelectedDesignsPanel';
+import AllDesignsPanel from './panels/AllDesignsPanel';
 import { Design, DESIGN_INDICATOR_TYPES, toggleDesignIndicator }  from '../models/Design';
 function arrayRowFactory(length, value = 0) {
   return new Array(length).fill(value);
@@ -224,34 +225,6 @@ export default class DesignPage extends Component {
     });
   }
 
-  _getAllDesignsTable(){
-    return this.state.allDesigns.map((el, index) => (
-      <TouchableHighlight style={
-          [
-            styles.panelPropTableDesignItem,
-            {
-              backgroundColor: (el === null)? '#ccc': (this.state.activeDesignFromAll === index)?'#69c9c8':'#f3f4f8',
-            }
-          ]
-        }
-        key={index}
-        onPress={() => {
-          const designs = this.state.allDesigns;
-          if (el !== null)
-            this.setState({
-              activeDesignFromAll : index,
-              currentDesign : Object.assign({}, designs[index]),
-              verticalIndex : -1,
-              horizontalIndex : 0
-            })}
-        }
-      >
-          <Text style={styles.panelPropTableItemText} key={index}>{(el === null)?'':((index < 10)?'0': '') + index}</Text>
-      </TouchableHighlight>
-    ));
-  }
-
-
 
   _setBluetoothModalVisibility(value){
     if (!value && this.state.connected){
@@ -334,33 +307,12 @@ export default class DesignPage extends Component {
       this.write(message);
     }
   }
-
-  deleteDesignsFromAll(){
-    let designs = this.state.allDesigns,
-        index = this.state.activeDesignFromAll;
-    if (index === null)
-      return;
-    Alert.alert(
-      'Confirm deletion',
-      'Do you want to delete this design?',
-      [
-        {
-          text: 'NO'
-        },
-        {
-          text: 'YES',
-          onPress : () => {
-            designs[index] = null;
-            this.setState({
-              allDesigns : designs,
-              activeDesignFromAll : null
-            });
-            this.saveGlassData();
-          }
-        }
-      ]
-    );
-
+  deleteDesignFromAll(designs){
+    this.setState({
+      allDesigns : designs,
+      activeDesignFromAll : null
+    });
+    this.saveGlassData();
   }
   deleteDesignsFromSelected(designs){
     this.setState({
@@ -419,34 +371,16 @@ export default class DesignPage extends Component {
   setActiveDesignFromSelected(index){
     this.setState({ activeDesignFromSelected : index })
   }
-
+  onAllDesignsItemPress(index){
+    const designs = this.state.allDesigns;
+    this.setState({
+      activeDesignFromAll : index,
+      currentDesign : Object.assign({}, designs[index]),
+      verticalIndex : -1,
+      horizontalIndex : 0
+    })
+  }
   render(){
-    allDesignsPanel = (
-      <View style={styles.panel}>
-        <View style={[styles.panelHeader, {flexDirection: 'row', justifyContent: 'space-between'}]}>
-          <TouchableHighlight style={styles.buttonRectangle} onPress={this.moveDesignToSelected.bind(this)}>
-            <Text style={styles.buttonRectangleText}>&#10003;</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.buttonRectangle} onPress={() => this._showAllDesignsPanelVisibility.bind(this)(false)}>
-            <Text style={styles.buttonRectangleText}>&or;</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.buttonRectangle} onPress={this.deleteDesignsFromAll.bind(this)}>
-            <Text style={styles.buttonRectangleText}>&#10005;</Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.panelBody}>
-          <View style={styles.panelPropsContainer}>
-            <View style={styles.panelPropTitle}>
-              <Text style={styles.titleCaret}>&or;</Text>
-              <Text style={styles.panelPropTitleText}>Designs List</Text>
-            </View>
-            <View style={styles.panelPropDesignsTable}>
-              { this._getAllDesignsTable() }
-            </View>
-          </View>
-        </View>
-      </View>
-    );
     return (
       <View style={styles.container}>
       <Modal
@@ -520,7 +454,7 @@ export default class DesignPage extends Component {
             <View style={styles.propsPanel}>
               <DesignSettingsPanel
                 visible = { this.state.showConfigPanel }
-                onClose = { ()=> this.setState({showConfigPanel : false}) }
+                onClose = { () => this.setState({showConfigPanel : false}) }
               />
               <SelectedDesignsPanel
                 visible = { this.state.showSelectedDesignsPanel }
@@ -530,7 +464,15 @@ export default class DesignPage extends Component {
                 onDesignItemDelete = { this.deleteDesignsFromSelected.bind(this) }
                 active = { this.state.activeDesignFromSelected }
               />
-              { this.state.showAllDesignsPanel && allDesignsPanel}
+              <AllDesignsPanel
+                onClose = { () => this.setState({ showAllDesignsPanel : false }) }
+                active = { this.state.activeDesignFromAll }
+                designs = { this.state.allDesigns }
+                onDesignItemPress = { this.onAllDesignsItemPress.bind(this) }
+                visible = { this.state.showAllDesignsPanel }
+                onDesignItemSelect = { this.moveDesignToSelected.bind(this) }
+                onDesignItemDelete = { this.deleteDesignFromAll.bind(this) }
+              />
             </View>
           </View>
           <View style={styles.controlPanel}>
