@@ -5,11 +5,12 @@ class Design {
     this.repetitionNumber = repetitionNumber;
     this.time = time;
   }
-  toggleIndicator(type, index){
-    this.indicators[type][index] = +!this.indicators[type][index];
-  }
+}
+
+function toggleDesignIndicator(design, type, index){
+  design.indicators[type][index] = +!design.indicators[type][index];
 }
 
 const DESIGN_INDICATOR_TYPES = { VERTICAL : 'vertical', HORIZONTAL : 'horizontal'};
 
-export { Design, DESIGN_INDICATOR_TYPES };
+export { Design, DESIGN_INDICATOR_TYPES, toggleDesignIndicator };

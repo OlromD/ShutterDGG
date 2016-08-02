@@ -21,7 +21,7 @@ import config from '../config/DesignConfig';
 import { LOGO } from '../config/ApplicationConfig';
 import { STANDARD_DESIGNS } from '../config/StandardDesignsConfig';
 import DesignSettingsPanel from './panels/DesignSettingsPanel';
-import { Design, DESIGN_INDICATOR_TYPES }  from '../models/Design';
+import { Design, DESIGN_INDICATOR_TYPES, toggleDesignIndicator }  from '../models/Design';
 function arrayRowFactory(length, value = 0) {
   return new Array(length).fill(value);
 }
@@ -156,9 +156,11 @@ export default class DesignPage extends Component {
 
   saveDesign(){
     let designs = this.state.allDesigns;
-    designs[designs.indexOf(null)] = Object.assign({}, this.state.currentDesign);
+    const index = designs.indexOf(null);
+    designs[index] = Object.assign({}, this.state.currentDesign);
     this.setState({
       allDesigns: designs,
+      activeDesignFromAll : index
     });
     this.saveGlassData();
     Alert.alert('Your design has been saved!', 'Do you want to create new design or stay on this one?', [
@@ -250,7 +252,9 @@ export default class DesignPage extends Component {
           if (el !== null)
             this.setState({
               activeDesignFromAll : index,
-              currentDesign : designs[index]
+              currentDesign : Object.assign({}, designs[index]),
+              verticalIndex : -1,
+              horizontalIndex : 0
             })}
         }
       >
@@ -450,7 +454,6 @@ export default class DesignPage extends Component {
     designs[designs.indexOf(null)] = index;
     this.setState({
       selectedDesigns: designs,
-      activeDesignFromAll : null
     });
     Alert.alert(
       'Congratulations!',
@@ -724,7 +727,7 @@ export default class DesignPage extends Component {
   _changeVerticalIndicatorValue(){
     const index = this.state.verticalIndex;
     let design = this.state.currentDesign;
-    design.toggleIndicator('vertical', index);
+    toggleDesignIndicator(design, DESIGN_INDICATOR_TYPES.VERTICAL, index);
 
     this.setState({
       currentDesign : design
@@ -733,7 +736,7 @@ export default class DesignPage extends Component {
   _changeHorizontalIndicatorValue(){
     const index = this.state.horizontalIndex;
     let design = this.state.currentDesign;
-    design.toggleIndicator('horizontal', index);
+    toggleDesignIndicator(design, DESIGN_INDICATOR_TYPES.HORIZONTAL, index);
     this.setState({
       currentDesign : design
     });
