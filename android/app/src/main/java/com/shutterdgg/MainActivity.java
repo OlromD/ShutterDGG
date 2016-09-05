@@ -1,11 +1,11 @@
 package com.shutterdgg;
-import com.rusel.RCTBluetoothSerial.*;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 
 import java.util.Arrays;
 import java.util.List;
+import it.innove.BleManagerPackage;
 
 public class MainActivity extends ReactActivity {
 
@@ -35,7 +35,7 @@ public class MainActivity extends ReactActivity {
     protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-			new RCTBluetoothSerialPackage()
+			new BleManagerPackage()
         );
     }
 }

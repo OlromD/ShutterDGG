@@ -10,9 +10,9 @@ import {
   Image,
   Alert,
   AsyncStorage,
+  StyleSheet
 } from 'react-native';
 
-import BluetoothSerial from 'react-native-bluetooth-serial'
 import GlassGrid from './grid/GlassGrid';
 
 import styles from '../style/DesignPageStyle';
@@ -25,6 +25,7 @@ import SelectedDesignsPanel from './panels/SelectedDesignsPanel';
 import AllDesignsPanel from './panels/AllDesignsPanel';
 import { Design, DESIGN_INDICATOR_TYPES, toggleDesignIndicator }  from '../models/Design';
 import Joystick from './Joystick';
+import SendingDataToDeviceModal from '../modals/SendingDataToDeviceModal';
 
 
 function arrayRowFactory(length, value = 0) {
@@ -42,6 +43,12 @@ let rows,
     design;
 
 export default class DesignPage extends Component {
+  constructor(props){
+    super(props);
+
+    this.sendingDataToDeviceModalOnClose = this.sendingDataToDeviceModalOnClose.bind(this);
+    this.getDataForSendingToDevice = this.getDataForSendingToDevice.bind(this);
+  }
   componentWillMount(){
 
     const PADDING = 100;
@@ -73,6 +80,7 @@ export default class DesignPage extends Component {
       showConfigPanel: false,
       showSelectedDesignsPanel: false,
       showAllDesignsPanel: false,
+      sendingDataToDeviceModalVisible: false,
       bluetoothModalVisibility : false,
       bluetoothDeviceAddress : null,
       allDesigns: [],
@@ -80,23 +88,12 @@ export default class DesignPage extends Component {
       devices : [],
       activeDesignFromAll : null,
       activeDesignFromSelected : null,
-
       intervalTime : config.intervalTime[0]
     }
 
   }
   componentDidMount(){
-    Promise.all([
-      BluetoothSerial.isEnabled(),
-      BluetoothSerial.list()
-    ])
-    .then((values) => {
-      const [ isEnabled, devices ] = values
-      this.setState({ isEnabled, devices })
-      if (!this.state.isEnabled){
-        this._requestBluetoothActivation();
-      }
-    })
+    
   }
 
   prepareGlassData(){
@@ -187,13 +184,6 @@ export default class DesignPage extends Component {
       }
     ]);
   }
-  _requestBluetoothActivation(){
-    BluetoothSerial.enable()
-    .then((res) => {
-      this.setState({ isEnabled: res });
-    })
-    .catch((err) => alert(err))
-  }
 
   _setModalVisibility(value){
     this.setState({modalVisible : value});
@@ -235,78 +225,6 @@ export default class DesignPage extends Component {
     });
   }
 
-  discoverUnpaired () {
-    if (this.state.discovering) {
-      return false
-    } else {
-      this.setState({ discovering: true })
-      BluetoothSerial.discoverUnpairedDevices()
-      .then((unpairedDevices) => {
-        const devices = this.state.devices
-        const deviceIds = devices.map((d) => d.id)
-        unpairedDevices.forEach((device) => {
-          if (deviceIds.indexOf(device.id) < 0) {
-            devices.push(device)
-          }
-        })
-        this.setState({ devices, discovering: false })
-      })
-    }
-  }
-
-
-  connect (device) {
-    this.setState({ connecting: true })
-    BluetoothSerial.connect(device.id)
-    .then((res) => {
-      alert(res.message)
-      this.setState({ device, connected: true, connecting: false })
-    })
-    .catch((err) => {
-      this.setState({connecting: false });
-      alert(err);
-    })
-  }
-
-
-  disconnect () {
-    this.setState({ connected: false })
-    BluetoothSerial.disconnect()
-    .catch((err) => alert(err))
-  }
-
-
-  toggleConnect (value) {
-    if (value === true && this.state.device) {
-      this.connect(this.state.device)
-    } else {
-      this.disconnect()
-    }
-  }
-
-  write (message) {
-    if (!this.state.connected) {
-      alert('You must connect to device first')
-    }
-
-    BluetoothSerial.write(message)
-    .then((res) => {
-      alert('Successfuly wrote to device')
-      this.setState({ connected: true })
-    })
-    .catch((err) => alert(err))
-  }
-
-  sendDesignData(){
-    const device = this.state.devices.filter(d => d.id == this.state.bluetoothDeviceAddress)[0];
-    this.setState({device});
-    const message = '0 ' + this.state.horizontalIndicators.join('') + ' ' + this.state.verticalIndicators.join('');
-    if (!this.state.connected){
-      this.connect(device);
-    } else {
-      this.write(message);
-    }
-  }
   deleteDesignFromAll(designs){
     this.setState({
       allDesigns : designs,
@@ -383,64 +301,6 @@ export default class DesignPage extends Component {
   render(){
     return (
       <View style={styles.container}>
-      <Modal
-        animationType={'fade'}
-        transparent={true}
-        visible={this.state.bluetoothModalVisibility}
-        onRequestClose={() => alert('Bluetooth modal has been closed!')}
-      >
-        <View style={styles.bluetoothModalWrapper}>
-          <View style={styles.bluetoothModalBody}>
-            <Text style={styles.bluetoothModalTitle}>
-              Choose the device
-            </Text>
-
-            {
-              (this.state.devices.length || this.state.discovering)? (
-                <View>
-
-                  {(!this.state.discovering)?(
-                    <Picker
-                      selectedValue={this.state.bluetoothDeviceAddress}
-                      style={styles.bluetoothModalPicker}
-                      onValueChange={(val) => this.setState({bluetoothDeviceAddress : val, device: this.state.devices.filter(d => d.id == val)})}
-                    >
-                      {this.state.devices.map(d => <PickerItem label={d.name + ' <' + d.id + '>'} key={d.id} value={d.id}/>)}
-                    </Picker>
-                  ) : (
-                    <Text style={styles.bluetoothModalDescriptionText}>Wait, please, while discovering...</Text>
-                  )}
-                </View>
-              ): (<Text style={styles.bluetoothModalDescriptionText}>There are no available devices!</Text>)
-            }
-            <View style={styles.bluetoothModalControl}>
-
-              <TouchableHighlight
-                style={styles.bluetoothModalButton}
-                onPress={() => this.discoverUnpaired.bind(this)()}
-              >
-                <Text style={styles.bluetoothModalButtonText}>{this.state.discovering? 'Discovering...': 'Discover'}</Text>
-              </TouchableHighlight>
-              <TouchableHighlight
-                style={styles.bluetoothModalButton}
-                onPress={() => this._setBluetoothModalVisibility.bind(this)(false)}
-              >
-                <Text style={styles.bluetoothModalButtonText}>Cancel</Text>
-              </TouchableHighlight>
-              {
-                (this.state.device)?(
-                  <TouchableHighlight
-                    style={styles.bluetoothModalButton}
-                    onPress={this.sendDesignData.bind(this)}
-                  >
-                    <Text style={styles.bluetoothModalButtonText}>{this.state.connecting? 'Connecting...': this.state.connected? 'Send': 'Connect'}</Text>
-                  </TouchableHighlight>
-                ) : null
-              }
-            </View>
-          </View>
-        </View>
-      </Modal>
         <View style={styles.constructorContainer}>
           <View style={styles.constructor}>
             <GlassGrid
@@ -482,22 +342,22 @@ export default class DesignPage extends Component {
               <TouchableHighlight style={styles.leftControlPanelButton}
                 onPress={() => this._setConfigPanelVisibility(true)}
               >
-                <Text style={{color: '#fff', fontSize: 15, textAlign: 'center'}}>Movement & Time Sequence of a Single Design</Text>
+                <Text style={panelStyles.actionButtonText}>Movement & Time Sequence of a Single Design</Text>
               </TouchableHighlight>
               <TouchableHighlight style={styles.leftControlPanelButton}
                 onPress={() => this._showAllDesignsPanelVisibility.bind(this)(true)}
               >
-                <Text style={{color: '#fff', fontSize: 15, textAlign: 'center'}}>Designs List with or without Motion</Text>
+                <Text style={panelStyles.actionButtonText}>Designs List with or without Motion</Text>
               </TouchableHighlight>
               <TouchableHighlight style={styles.leftControlPanelButton}
                 onPress={() => {this._showSelectedDesignsPanelVisibility.bind(this)(true)}}
               >
-                <Text style={{color: '#fff', fontSize: 15, textAlign: 'center'}}>Movement & Time Sequence of Multiple Designs</Text>
+                <Text style={panelStyles.actionButtonText}>Movement & Time Sequence of Multiple Designs</Text>
               </TouchableHighlight>
               <TouchableHighlight style={styles.leftControlPanelButton}
                 onPress={() => {this._showSelectedDesignsPanelVisibility.bind(this)(true)}}
               >
-                <Text style={{color: '#fff', fontSize: 15, textAlign: 'center'}}>Choose/Change block of 2-12 designs</Text>
+                <Text style={panelStyles.actionButtonText}>Choose/Change block of 2-12 designs</Text>
               </TouchableHighlight>
             </View>
             <View style={{justifyContent: 'center', alignItems: 'center', width: 160}}>
@@ -509,7 +369,7 @@ export default class DesignPage extends Component {
                   <TouchableHighlight style={styles.editNewDesignButton}
                     onPress={this.editNewDesign.bind(this)}
                   >
-                    <Text style={{color: '#fff', fontSize: 15, textAlign: 'center'}}>Edit New Design</Text>
+                    <Text style={panelStyles.actionButtonText}>Edit New Design</Text>
                   </TouchableHighlight>
                 </View>
                 <View style={{flex: 3, flexDirection: 'row', justifyContent: 'center'}}>
@@ -535,29 +395,47 @@ export default class DesignPage extends Component {
             </View>
           </View>
         </View>
+        <SendingDataToDeviceModal
+          visible = { this.state.sendingDataToDeviceModalVisible } 
+          onClose = { this.sendingDataToDeviceModalOnClose }
+          data = { this.getDataForSendingToDevice() }
+        />
       </View>
     );
   }
 
-  _runAndStopButtonPress(){
-    BluetoothSerial.isEnabled()
-      .then((val) => {
-        this.setState({isEnabled: val});
-        if (!val){
-          Alert.alert('Bluetooth is not activated!', 'For using dream glass you have to activate your bluetooth module.',[
-            {
-              text: 'Close'
-            },
-            {
-              text: 'Activate',
-              onPress: () => this._requestBluetoothActivation.bind(this)()
-            }
-          ]);
-        } else {
-          this._setBluetoothModalVisibility.bind(this)(true);
-        }
-      })
+  getDataForSendingToDevice(){
+    const { width, height } = this.props;
+    const { horizontal, vertical } = this.state.currentDesign.indicators;
+    const hI = this.transformIndicatorsDataToSpecificFormat(horizontal.join('')),
+          wI = this.transformIndicatorsDataToSpecificFormat(vertical.join(''));
+    return `${width} ${height} ${hI} ${wI}`;
   }
+
+  // adapter
+  transformIndicatorsDataToSpecificFormat(indicators){
+    let result = '';
+    const bitPortion = 3;
+    for (let i = 0; i < indicators.length; i += bitPortion){
+      result += parseInt(indicators.substr(i, bitPortion), 2);
+      result += i % 2 === 1? '0':'';
+    }
+    return result;
+  }
+  // adapter
+
+  _runAndStopButtonPress(){
+    this.setState({
+      sendingDataToDeviceModalVisible: true
+    });
+  }
+
+  sendingDataToDeviceModalOnClose(){
+    this.setState({
+      sendingDataToDeviceModalVisible: false
+    });
+  }
+
   _OKButtonPress(){
     const hIndex = this.state.horizontalIndex;
     if (hIndex === -1)
@@ -630,3 +508,12 @@ export default class DesignPage extends Component {
 
   }
 }
+
+
+const panelStyles = StyleSheet.create({
+  actionButtonText: {
+    color: '#fff', 
+    fontSize: 15, 
+    textAlign: 'center'
+  }
+});
