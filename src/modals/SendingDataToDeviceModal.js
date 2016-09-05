@@ -19,8 +19,9 @@ export default class BluetoothConnectionModal extends Component{
     this.state = {
       scanning: false,
       devices: [],
-      serviceUUID: '5ED1FEDA-D92E-4552-9CED-FB590E341A06',
-      characteristicUUID: '5ED1FEDA-D92E-4552-9CED-FB590E341A08'
+      serviceUUID: 'CA8175D3-7F66-46DA-9334-B4467A4247A3',
+      characteristicUUID: 'CA8175D3-7F66-46DA-9334-B4467A4247A5',
+      data: ''
     };
 
     this.getDevices = this.getDevices.bind(this);
@@ -92,6 +93,7 @@ export default class BluetoothConnectionModal extends Component{
 
   writeDataToDevice(device){
     const { data } = this.props;
+    // const { data } = this.state;
     const { serviceUUID, characteristicUUID } = this.state;
     BleManager.write(device.id, serviceUUID, characteristicUUID, data)
     .then(() => {
@@ -134,6 +136,11 @@ export default class BluetoothConnectionModal extends Component{
               <Text style = { styles.description } >To display design on a device press "Scan" button. After that choose a device from the list of available devices and press on it to send data.</Text>
               { this.getDevices() }
 
+              <TextInput
+                value = { this.state.data }
+                onChangeText = { (data) =>  this.setState({ data })}
+                placeholder = {'Data'}
+              />
               <Text style = { styles.description } >Configuration</Text>
               <TextInput
                 value = { this.state.serviceUUID }

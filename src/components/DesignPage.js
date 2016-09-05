@@ -409,7 +409,8 @@ export default class DesignPage extends Component {
     const { horizontal, vertical } = this.state.currentDesign.indicators;
     const hI = this.transformIndicatorsDataToSpecificFormat(horizontal.join('')),
           wI = this.transformIndicatorsDataToSpecificFormat(vertical.join(''));
-    return `${width} ${height} ${hI} ${wI}`;
+    return `${wI} ${hI}`;
+    // return `128`;
   }
 
   // adapter
@@ -418,7 +419,7 @@ export default class DesignPage extends Component {
     const bitPortion = 3;
     for (let i = 0; i < indicators.length; i += bitPortion){
       result += parseInt(indicators.substr(i, bitPortion), 2);
-      result += i % 2 === 1? '0':'';
+      // result += i % 2 === 1? '0':'';
     }
     return result;
   }
