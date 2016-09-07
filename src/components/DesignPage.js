@@ -340,9 +340,9 @@ export default class DesignPage extends Component {
           <View style={styles.controlPanel}>
             <View style={styles.leftControlPanel}>
               <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={() => this._setConfigPanelVisibility(true)}
+                onPress={this.editNewDesign.bind(this)}
               >
-                <Text style={panelStyles.actionButtonText}>Movement & Time Sequence of a Single Design</Text>
+                <Text style={panelStyles.actionButtonText}>Edit New Design</Text>
               </TouchableHighlight>
               <TouchableHighlight style={styles.leftControlPanelButton}
                 onPress={() => this._showAllDesignsPanelVisibility.bind(this)(true)}
@@ -350,48 +350,30 @@ export default class DesignPage extends Component {
                 <Text style={panelStyles.actionButtonText}>Designs List with or without Motion</Text>
               </TouchableHighlight>
               <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={() => {this._showSelectedDesignsPanelVisibility.bind(this)(true)}}
+                onPress={this.saveDesign.bind(this)}
               >
-                <Text style={panelStyles.actionButtonText}>Movement & Time Sequence of Multiple Designs</Text>
+                <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>Save & Load</Text>
               </TouchableHighlight>
               <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={() => {this._showSelectedDesignsPanelVisibility.bind(this)(true)}}
+                onPress={this._runAndStopButtonPress.bind(this)}
               >
-                <Text style={panelStyles.actionButtonText}>Choose/Change block of 2-12 designs</Text>
+                <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>RUN & STOP</Text>
               </TouchableHighlight>
             </View>
             <View style={{justifyContent: 'center', alignItems: 'center', width: 160}}>
               <Image source={LOGO} style={{width: 160, resizeMode: 'stretch', height: 100}}/>
             </View>
-            <View style={{flex: 1, flexDirection: 'row'}}>
-              <View style={{flex: 1, flexDirection: 'column'}}>
-                <View style={{flex: 2, justifyContent: 'flex-end', alignItems: 'center'}}>
-                  <TouchableHighlight style={styles.editNewDesignButton}
-                    onPress={this.editNewDesign.bind(this)}
-                  >
-                    <Text style={panelStyles.actionButtonText}>Edit New Design</Text>
-                  </TouchableHighlight>
-                </View>
-                <View style={{flex: 3, flexDirection: 'row', justifyContent: 'center'}}>
-                  <TouchableHighlight style={styles.rightPanelActionButton}
-                    onPress={this.saveDesign.bind(this)}
-                  >
-                    <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>Save & Load</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight style={styles.rightPanelActionButton}
-                    onPress={this._runAndStopButtonPress.bind(this)}
-                  >
-                    <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>RUN & STOP</Text>
-                  </TouchableHighlight>
-                </View>
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
+              
+              <View style = {{ width: 200}}>
+                <Joystick
+                  onUpButtonPress = { this._moveUp.bind(this) }
+                  onDownButtonPress = { this._moveDown.bind(this) }
+                  onLeftButtonPress = { this._moveLeft.bind(this) }
+                  onRightButtonPress = { this._moveRight.bind(this) }
+                  onOKButtonPress = { this._OKButtonPress.bind(this) }
+                />
               </View>
-              <Joystick
-                onUpButtonPress = { this._moveUp.bind(this) }
-                onDownButtonPress = { this._moveDown.bind(this) }
-                onLeftButtonPress = { this._moveLeft.bind(this) }
-                onRightButtonPress = { this._moveRight.bind(this) }
-                onOKButtonPress = { this._OKButtonPress.bind(this) }
-              />
             </View>
           </View>
         </View>
