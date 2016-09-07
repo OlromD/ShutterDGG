@@ -409,7 +409,7 @@ export default class DesignPage extends Component {
     const { horizontal, vertical } = this.state.currentDesign.indicators;
     const hI = this.transformIndicatorsDataToSpecificFormat(horizontal.join('')),
           wI = this.transformIndicatorsDataToSpecificFormat(vertical.join(''));
-    return `${wI} ${hI}`;
+    return `${hI}${wI}2`;
     // return `128`;
   }
 
