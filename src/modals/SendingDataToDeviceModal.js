@@ -10,6 +10,7 @@ import {
   TextInput
 } from 'react-native';
 import BleManager from 'react-native-ble-manager';
+import Button from '../components/Button';
 
 
 export default class BluetoothConnectionModal extends Component{
@@ -53,17 +54,17 @@ export default class BluetoothConnectionModal extends Component{
     const { devices } = this.state;
     if (!devices.length)
       return (
-        <Text style = { styles.description } >There are no available devices. Try to scan.</Text>
+        <Text style = { styles.description } >There are no available devices :(</Text>
       );
     return devices.map((device, index) => {
       return (
-        <TouchableHighlight
-          style = { styles.deviceItem }
-          onPress = { () => this.onDeviceItemPress(device) }
-          key = { index }
+        <Button buttonStyle = { styles.deviceItem }
+                textStyle = { styles.deviceItemText }
+                onPress = { () => this.onDeviceItemPress(device) }
+                key = { index }
         >
-          <Text style = { styles.deviceItemText }>{ `${device.name} <${device.id}>` }</Text>
-        </TouchableHighlight>
+          { `${device.name} <${device.id}>` }
+        </Button>
     );
     });
   }
@@ -71,13 +72,13 @@ export default class BluetoothConnectionModal extends Component{
   handleScan() {
       const SCAN_TIME = 30;
         BleManager.scan([], SCAN_TIME, true)
-            .then((results) => {
-              this.setState({
-                scanning: true,
-                devices: []
-              });
-              console.log('Scan started');
+          .then((results) => {
+            this.setState({
+              scanning: true,
+              devices: []
             });
+            console.log('Scan started');
+          });
   }
 
   handleStopScan(){
@@ -93,7 +94,6 @@ export default class BluetoothConnectionModal extends Component{
 
   writeDataToDevice(device){
     const { data } = this.props;
-    // const { data } = this.state;
     const { serviceUUID, characteristicUUID } = this.state;
     BleManager.write(device.id, serviceUUID, characteristicUUID, data)
     .then(() => {
@@ -121,45 +121,30 @@ export default class BluetoothConnectionModal extends Component{
   }
 
   render(){
-    const { visible, onClose } = this.props;
-    const { scanning } = this.state;
+    const { visible, onClose } = this.props,
+          { scanning } = this.state;
     return (
-      <Modal
-          animationType = { "slide" }
-          transparent = { true }
-          visible = { visible }
-          onRequestClose={() => {alert("Modal has been closed.")}}
+        <Modal animationType = { "slide" }
+               transparent = { true }
+               visible = { visible }
         >
           <View style = { styles.wrapper }>
             <View style = { styles.content }>
               <Text style = { styles.title } >Run design on device</Text>
-              <Text style = { styles.description } >To display design on a device press "Scan" button. After that choose a device from the list of available devices and press on it to send data.</Text>
               { this.getDevices() }
-              
-              <Text style = { styles.description } >Configuration</Text>
-              <TextInput
-                value = { this.state.serviceUUID }
-                onChangeText = { (serviceUUID) =>  this.setState({ serviceUUID })}
-                placeholder = {'ServiceUUID'}
-              />
-              <TextInput
-                value = { this.state.characteristicUUID }
-                onChangeText = { (characteristicUUID) =>  this.setState({ characteristicUUID })}
-                placeholder = {'Characteristic UUID'}
-              />
               <View style = { styles.controlButtons }>
-                <TouchableHighlight
-                  style = { styles.btn }
-                  onPress = { !scanning? this.onScanButtonPress: null }
+                <Button buttonStyle = { styles.btn }
+                        textStyle = { styles.btnText }
+                        onPress = { !scanning? this.onScanButtonPress: null }
                 >
-                  <Text style = { styles.btnText } >{!scanning? 'Scan': 'Scanning...'}</Text>
-                </TouchableHighlight>
-                <TouchableHighlight
-                  onPress = { onClose }
-                  style = { styles.btn }
+                  { !scanning? 'Scan': 'Scanning...' }
+                </Button>
+                <Button buttonStyle = { styles.btn }
+                        textStyle = { styles.btnText }
+                        onPress = { onClose } 
                 >
-                  <Text style = { styles.btnText } >Close</Text>
-                </TouchableHighlight>
+                  Close
+                </Button>
               </View>
             </View>
           </View>
@@ -173,12 +158,15 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,.5)',
-    justifyContent: 'center',
-    alignItems: 'center'
+    // justifyContent: 'center',
+    // alignItems: 'center'
   },
   content: {
     width: 400,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding:10,
+    margin: 20
   },
   controlButtons: {
     justifyContent: 'space-between',
@@ -186,15 +174,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   btn: {
-    backgroundColor: '#000',
+    backgroundColor: '#69c8ca',
     padding: 10,
-    width: 130,
+    width: 150,
     margin: 10,
     borderRadius: 5
   },
   btnText: {
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 17,
     color: '#fff'
   },
   title: {
@@ -204,10 +192,10 @@ const styles = StyleSheet.create({
     margin:10
   },
   description: {
-    fontSize: 17, 
-    color: '#555',
-    textAlign: 'left',
-    margin: 10
+    fontSize: 19, 
+    color: '#777',
+    textAlign: 'center',
+    margin: 20
   },
   deviceItem: {
     padding:10,

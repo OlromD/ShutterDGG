@@ -81,7 +81,9 @@ export default class DesignPage extends Component {
       showConfigPanel: false,
       showSelectedDesignsPanel: false,
       showAllDesignsPanel: false,
-      sendingDataToDeviceModalVisible: false,
+      // sendingDataToDeviceModalVisible: false,
+      sendingDataToDeviceModalVisible: true,
+      
       bluetoothModalVisibility : false,
       bluetoothDeviceAddress : null,
       allDesigns: [],
