@@ -13,6 +13,25 @@ import BleManager from 'react-native-ble-manager';
 import Button from '../components/Button';
 
 
+const ALERTS = {
+  connection: {
+    fail: {
+      title: 'Ooops...',
+      message: 'Could not connect to device. Please, try again.'
+    }
+  },
+  writing: {
+    success: {
+      title: 'Success',
+      message: 'The design has been loaded on device.'
+    },
+    fail: {
+      title: 'Ooops...',
+      message: 'Could not load design on device. Please, try again.'
+    }
+  }
+};
+
 export default class BluetoothConnectionModal extends Component{
   constructor(props){
     super(props);
@@ -22,7 +41,6 @@ export default class BluetoothConnectionModal extends Component{
       devices: [],
       serviceUUID: 'CA8175D3-7F66-46DA-9334-B4467A4247A3',
       characteristicUUID: 'CA8175D3-7F66-46DA-9334-B4467A4247A5',
-      data: ''
     };
 
     this.getDevices = this.getDevices.bind(this);
@@ -37,9 +55,9 @@ export default class BluetoothConnectionModal extends Component{
 
   componentWillMount(){
     NativeAppEventEmitter
-        .addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
+      .addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
     NativeAppEventEmitter
-        .addListener('BleManagerStopScan',this.handleStopScan);
+      .addListener('BleManagerStopScan',this.handleStopScan);
   }
 
   handleDiscoverPeripheral(data){
@@ -70,13 +88,13 @@ export default class BluetoothConnectionModal extends Component{
 
   handleScan() {
       const SCAN_TIME = 30;
-        BleManager.scan([], SCAN_TIME, true)
-          .then((results) => {
-            this.setState({
-              scanning: true,
-              devices: []
-            });
+      BleManager.scan([], SCAN_TIME, true)
+        .then((results) => {
+          this.setState({
+            scanning: true,
+            devices: []
           });
+        });
   }
 
   handleStopScan(){
@@ -90,29 +108,31 @@ export default class BluetoothConnectionModal extends Component{
   }
 
   writeDataToDevice(device){
-    const { data } = this.props;
-    const { serviceUUID, characteristicUUID } = this.state;
+    const { data } = this.props,
+          { serviceUUID, characteristicUUID } = this.state,
+          { success, fail } = ALERTS.writing;
     BleManager.write(device.id, serviceUUID, characteristicUUID, data)
-    .then(() => {
-      Alert.alert('Success', `Next data has been transferred:\n${data}`);
-    })
-    .catch(() => {
-      Alert.alert('Error', 'Error occured while writing data. Try again.');
-      
-    });
+      .then(() => {
+        Alert.alert(success.title, success.message);
+      })
+      .catch(() => {
+        Alert.alert(fail.title, fail.message);
+      });
   }
+  
 
   onScanButtonPress(){
     this.handleScan();
   }
 
   connectToDevice(device, writeDataCallback){
+    const { fail } = ALERTS.connection;
     BleManager.connect(device.id)
       .then(() => {
         writeDataCallback(device);
       })
       .catch((error) => {
-        Alert.alert('Ooops...', 'Error occured while connecting. Try again.');
+        Alert.alert(fail.title, fail.message);
       });
   }
 
