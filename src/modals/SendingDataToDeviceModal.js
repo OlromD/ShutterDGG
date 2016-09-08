@@ -89,20 +89,20 @@ export default class BluetoothConnectionModal extends Component{
   }
 
   handleScan() {
-      const SCAN_TIME = 30;
-      BleManager.scan([], SCAN_TIME, true)
-        .then((results) => {
-          this.setState({
-            scanning: true,
-            devices: []
-          });
+    const SCAN_TIME = 30;
+    BleManager.scan([], SCAN_TIME, true)
+      .then((results) => {
+        this.setState({
+          scanning: true,
+          devices: []
         });
+      });
   }
 
   handleStopScan(){
-      this.setState({
-        scanning: false
-      });
+    this.setState({
+      scanning: false
+    });
   }
 
   onDeviceItemPress(device){
