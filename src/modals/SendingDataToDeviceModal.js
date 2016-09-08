@@ -43,7 +43,6 @@ export default class BluetoothConnectionModal extends Component{
   }
 
   handleDiscoverPeripheral(data){
-      console.log(data);
       const devices = this.state.devices;
       this.setState({
         devices : [].concat(devices).concat(data)
@@ -63,7 +62,7 @@ export default class BluetoothConnectionModal extends Component{
                 onPress = { () => this.onDeviceItemPress(device) }
                 key = { index }
         >
-          { `${device.name} <${device.id}>` }
+          { `${ device.name } <${ device.id }>` }
         </Button>
     );
     });
@@ -77,7 +76,6 @@ export default class BluetoothConnectionModal extends Component{
               scanning: true,
               devices: []
             });
-            console.log('Scan started');
           });
   }
 
@@ -85,7 +83,6 @@ export default class BluetoothConnectionModal extends Component{
       this.setState({
         scanning: false
       });
-      console.log('Scan stopped');
   }
 
   onDeviceItemPress(device){
@@ -99,7 +96,7 @@ export default class BluetoothConnectionModal extends Component{
     .then(() => {
       Alert.alert('Success', `Next data has been transferred:\n${data}`);
     })
-    .catch((error) => {
+    .catch(() => {
       Alert.alert('Error', 'Error occured while writing data. Try again.');
       
     });
@@ -112,7 +109,6 @@ export default class BluetoothConnectionModal extends Component{
   connectToDevice(device, writeDataCallback){
     BleManager.connect(device.id)
       .then(() => {
-        // Alert.alert('Success', `Connected to device ${device.name}`);
         writeDataCallback(device);
       })
       .catch((error) => {
