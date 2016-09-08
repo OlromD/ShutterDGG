@@ -14,23 +14,27 @@ import Button from '../components/Button';
 
 
 const ALERTS = {
-  connection: {
-    fail: {
-      title: 'Ooops...',
-      message: 'Could not connect to device. Please, try again.'
-    }
-  },
-  writing: {
-    success: {
-      title: 'Success',
-      message: 'The design has been loaded on device.'
-    },
-    fail: {
-      title: 'Ooops...',
-      message: 'Could not load design on device. Please, try again.'
-    }
-  }
-};
+        connection: {
+          fail: {
+            title: 'Ooops...',
+            message: 'Could not connect to device. Please, try again.'
+          }
+        },
+        writing: {
+          success: {
+            title: 'Success',
+            message: 'The design has been loaded on device.'
+          },
+          fail: {
+            title: 'Ooops...',
+            message: 'Could not load design on device. Please, try again.'
+          }
+        }
+      },
+      SERVICE_UUID = 'CA8175D3-7F66-46DA-9334-B4467A4247A3',
+      CHARACTERISTIC_UUID = 'CA8175D3-7F66-46DA-9334-B4467A4247A5';
+
+
 
 export default class BluetoothConnectionModal extends Component{
   constructor(props){
@@ -38,9 +42,7 @@ export default class BluetoothConnectionModal extends Component{
 
     this.state = {
       scanning: false,
-      devices: [],
-      serviceUUID: 'CA8175D3-7F66-46DA-9334-B4467A4247A3',
-      characteristicUUID: 'CA8175D3-7F66-46DA-9334-B4467A4247A5',
+      devices: []
     };
 
     this.getDevices = this.getDevices.bind(this);
@@ -109,9 +111,8 @@ export default class BluetoothConnectionModal extends Component{
 
   writeDataToDevice(device){
     const { data } = this.props,
-          { serviceUUID, characteristicUUID } = this.state,
           { success, fail } = ALERTS.writing;
-    BleManager.write(device.id, serviceUUID, characteristicUUID, data)
+    BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, data)
       .then(() => {
         Alert.alert(success.title, success.message);
       })
