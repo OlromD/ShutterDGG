@@ -85,6 +85,22 @@ export default class DesignPage extends Component {
     this.getDataForSendingToDevice = this.getDataForSendingToDevice.bind(this);
     this.saveDesign = this.saveDesign.bind(this);
     this.initNewDesign = this.initNewDesign.bind(this);
+    this._moveUp = this._moveUp.bind(this);
+    this._moveDown = this._moveDown.bind(this);
+    this._moveLeft = this._moveLeft.bind(this);
+    this._moveRight = this._moveRight.bind(this);
+    this._OKButtonPress = this._OKButtonPress.bind(this);
+    this._setConfigPanelVisibility = this._setConfigPanelVisibility.bind(this);
+    this._showSelectedDesignsPanelVisibility = this._showSelectedDesignsPanelVisibility.bind(this);
+    this.deleteDesignsFromSelected = this.deleteDesignsFromSelected.bind(this);
+    this._showAllDesignsPanelVisibility = this._showAllDesignsPanelVisibility.bind(this);
+    this.onAllDesignsItemPress = this.onAllDesignsItemPress.bind(this);
+    this.moveDesignToSelected = this.moveDesignToSelected.bind(this);
+    this.deleteDesignFromAll = this.deleteDesignFromAll.bind(this);
+    this.editNewDesign = this.editNewDesign.bind(this);
+    this._showAllDesignsPanelVisibility = this._showAllDesignsPanelVisibility.bind(this);
+    this.saveDesign = this.saveDesign.bind(this);
+    this._runAndStopButtonPress = this._runAndStopButtonPress.bind(this);
   }
   componentWillMount(){
     const PADDING = 100;
@@ -301,48 +317,48 @@ export default class DesignPage extends Component {
             <View style={styles.propsPanel}>
               <DesignSettingsPanel
                 visible = { this.state.showConfigPanel }
-                onClose = { () => this._setConfigPanelVisibility.bind(this)(false) }
+                onClose = { () => this._setConfigPanelVisibility(false) }
                 onDesignChange = { design => this.setState({ currentDesign : design})}
                 design = { this.state.currentDesign }
               />
               <SelectedDesignsPanel
                 visible = { this.state.showSelectedDesignsPanel }
-                onClose = { () => this._showSelectedDesignsPanelVisibility.bind(this)(false)}
+                onClose = { () => this._showSelectedDesignsPanelVisibility(false)}
                 onDesignItemPress = { index => this.setState({ activeDesignFromSelected : index}) }
                 designs = { this.state.selectedDesigns }
-                onDesignItemDelete = { this.deleteDesignsFromSelected.bind(this) }
+                onDesignItemDelete = { this.deleteDesignsFromSelected }
                 active = { this.state.activeDesignFromSelected }
               />
               <AllDesignsPanel
-                onClose = { () => this._showAllDesignsPanelVisibility.bind(this)(false) }
+                onClose = { () => this._showAllDesignsPanelVisibility(false) }
                 active = { this.state.activeDesignFromAll }
                 designs = { this.state.allDesigns }
-                onDesignItemPress = { this.onAllDesignsItemPress.bind(this) }
+                onDesignItemPress = { this.onAllDesignsItemPress }
                 visible = { this.state.showAllDesignsPanel }
-                onDesignItemSelect = { this.moveDesignToSelected.bind(this) }
-                onDesignItemDelete = { this.deleteDesignFromAll.bind(this) }
+                onDesignItemSelect = { this.moveDesignToSelected }
+                onDesignItemDelete = { this.deleteDesignFromAll }
               />
             </View>
           </View>
           <View style={styles.controlPanel}>
             <View style={styles.leftControlPanel}>
               <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={this.editNewDesign.bind(this)}
+                onPress={this.editNewDesign}
               >
                 <Text style={panelStyles.actionButtonText}>Edit New Design</Text>
               </TouchableHighlight>
               <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={() => this._showAllDesignsPanelVisibility.bind(this)(true)}
+                onPress={() => this._showAllDesignsPanelVisibility(true)}
               >
                 <Text style={panelStyles.actionButtonText}>Designs List with or without Motion</Text>
               </TouchableHighlight>
               <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={this.saveDesign.bind(this)}
+                onPress={this.saveDesign}
               >
                 <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>Save & Load</Text>
               </TouchableHighlight>
               <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={this._runAndStopButtonPress.bind(this)}
+                onPress={this._runAndStopButtonPress}
               >
                 <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>RUN & STOP</Text>
               </TouchableHighlight>
@@ -354,11 +370,11 @@ export default class DesignPage extends Component {
               
               <View style = {{ width: 200}}>
                 <Joystick
-                  onUpButtonPress = { this._moveUp.bind(this) }
-                  onDownButtonPress = { this._moveDown.bind(this) }
-                  onLeftButtonPress = { this._moveLeft.bind(this) }
-                  onRightButtonPress = { this._moveRight.bind(this) }
-                  onOKButtonPress = { this._OKButtonPress.bind(this) }
+                  onUpButtonPress = { this._moveUp }
+                  onDownButtonPress = { this._moveDown }
+                  onLeftButtonPress = { this._moveLeft }
+                  onRightButtonPress = { this._moveRight }
+                  onOKButtonPress = { this._OKButtonPress }
                 />
               </View>
             </View>
