@@ -19,12 +19,17 @@ const navigationConfig = {
 
 
 export default class App extends Component {
-  componentDidMount(){
-    this.setState({
+  constructor(props){
+    super(props);
+    this.state = {
       width: '',
       height: ''
-    });
+    };
+    this.navigatorRenderScene = this.navigatorRenderScene.bind(this);
+    this.navigatorConfigureScene = this.navigatorConfigureScene.bind(this);
+    this._setDimensions = this._setDimensions.bind(this);
   }
+
   _setDimensions(width, height){
     this.setState({
       width: width,
@@ -34,10 +39,9 @@ export default class App extends Component {
   render() {
     return (
           <View style={styles.applicationContainer}>
-            <Navigator
-              initialRoute={ { id : 'MainPage' } }
-              renderScene={this.navigatorRenderScene.bind(this)}
-              configureScene={this.navigatorConfigureScene.bind(this)}
+            <Navigator initialRoute = { { id : 'MainPage' } }
+                       renderScene = { this.navigatorRenderScene }
+                       configureScene = { this.navigatorConfigureScene }
             />
           </View>
     );
@@ -53,10 +57,17 @@ export default class App extends Component {
   navigatorRenderScene(route, navigator){
     const routeID = route.id;
     if (routeID === 'MainPage'){
-      return <MainPage setDimensions={this._setDimensions.bind(this)} navigator={navigator}/>
+      return (
+        <MainPage setDimensions = { this._setDimensions } 
+                  navigator = { navigator }/>
+      );
      }
      if (routeID === 'DesignPage'){
-       return <DesignPage width={this.state.width} height={this.state.height} navigator={navigator}/>
+       return (
+          <DesignPage width = { this.state.width } 
+                      height = { this.state.height } 
+                      navigator = { navigator }/>
+       );
        // return <DesignPage width={'30'} height={'60'} navigator={navigator}/>
     }
   }

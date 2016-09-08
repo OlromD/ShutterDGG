@@ -3,69 +3,98 @@ import {
   Text,
   View,
   Picker,
-  TouchableHighlight,
   Alert
 } from 'react-native';
 import styles from '../style/GlassDimensionsPickerStyle';
 import config from '../config/GlassDimensionsConfig';
-let widthOptions, heightOptions;
+import Button from './Button';
+import { showAlert } from '../services/AlertService';
+
+
+const PickerItem = Picker.Item;
+const ALERTS = {
+  NOT_SELECTED_DIMENSIONS: {
+    title: 'Dimensions are not selected!', 
+    message: 'Please, choose width and height of your Dream Glass from the select boxes.', 
+    buttons: [ {text: 'GOT IT!'} ]
+  }
+};
+
 export default class GlassDimensionsPicker extends Component {
-  componentWillMount(){
+  constructor(props){
+    super(props);
+
     this.state = {
       width: '',
       height: '',
       buttonText: 'CONFIRM'
-    }
-    widthOptions = this._getWidthDimensionPickerValues();
-    heightOptions = this._getHeightDimensionPickerValues();
+    };
+
+    this.confirmButtonPress = this.confirmButtonPress.bind(this);
   }
 
-  _getWidthDimensionPickerValues(){
-    return config.width.map((el, index) => <Picker.Item value={el} label={el} key={'width' + index}/>);
+  getWidthDimensionPickerValues(){
+    return config.width.map((el, index) => {
+      return (
+        <PickerItem value = { el } 
+                     label = { el } 
+                     key = { 'width' + index }
+        />
+      );
+    });
   }
-  _getHeightDimensionPickerValues(){
-    return config.height.map((el, index) => <Picker.Item value={el} label={el} key={'height' + index}/>);
+  getHeightDimensionPickerValues(){
+    return config.height.map((el, index) => {
+      return (
+        <PickerItem value = {el} 
+                     label = { el } 
+                     key = { 'height' + index }
+        />
+      );
+    });
   }
 
   render(){
     return (
       <View>
-        <View style={styles.dimensionsContainer}>
-          <Picker
-            style={styles.dimensionPicker}
-            mode="dropdown"
-            selectedValue={this.state.width}
-            onValueChange={(width) => this.setState({width: width})}>
-              {widthOptions}
-          </Picker>
-          <Picker
-          style={styles.dimensionPicker}
-            selectedValue={this.state.height}
-            onValueChange={(height) => this.setState({height: height})}
-            mode="dropdown"
+        <View style = { styles.dimensionsContainer }>
+          <Picker style = { styles.dimensionPicker }
+                  mode = { 'dropdown' }
+                  selectedValue = { this.state.width }
+                  onValueChange = { (width) => this.setState({ width}) }
           >
-              {heightOptions}
+              { this.getWidthDimensionPickerValues() }
+          </Picker>
+          <Picker style = { styles.dimensionPicker }
+                  selectedValue = { this.state.height }
+                  onValueChange={ (height) => this.setState({ height }) }
+                  mode = { "dropdown" }
+          >
+              { this.getHeightDimensionPickerValues() }
           </Picker>
         </View>
-        <TouchableHighlight style={styles.confirmButton} onPress={this._confirmButtonPress.bind(this)}>
-          <Text style={styles.confirmButtonText}>{this.state.buttonText}</Text>
-        </TouchableHighlight>
+        <Button buttonStyle = { styles.confirmButton } 
+                onPress = { this.confirmButtonPress }
+                textStyle = { styles.confirmButtonText }
+        >
+          { this.state.buttonText }
+        </Button>
       </View>
     );
   }
-  _confirmButtonPress(){
+  confirmButtonPress(){
     if (this.state.width === 'Width' || this.state.height === 'Height'){
-      Alert.alert('Dimensions are not selected!', 'Please, choose width and height of your Dream Glass from the select boxes.', [{text: 'GOT IT!'}]);
+      showAlert(ALERTS.NOT_SELECTED_DIMENSIONS);
       return;
     }
     this.setState({
       buttonText: 'LOADING...'
     });
-    this.props.setDimensions(this.state.width, this.state.height);
+    const { setDimensions, navigator } = this.props;
+    setDimensions(this.state.width, this.state.height);
     setTimeout(() => {
-      this.props.navigator.push({
-        id : 'DesignPage',
-        name: 'constructor'
+      navigator.push({
+        id : 'DesignPage'
       });
     },100);
   }

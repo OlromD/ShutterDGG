@@ -26,7 +26,7 @@ import { Design, DESIGN_INDICATOR_TYPES, toggleDesignIndicator }  from '../model
 import Joystick from './Joystick';
 import SendingDataToDeviceModal from '../modals/SendingDataToDeviceModal';
 import Button from './Button';
-
+import { showAlert } from '../services/AlertService';
 
 function arrayRowFactory(length, value = 0) {
   return new Array(length).fill(value);
@@ -44,10 +44,7 @@ let rows,
 
 let ALERTS;
 
-function showAlert(alertData){
-  const { title = '', message = '', buttons = null } = alertData;
-  Alert.alert(title, message, buttons);
-}
+
 
 export default class DesignPage extends Component {
   constructor(props){
