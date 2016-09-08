@@ -42,23 +42,55 @@ let rows,
     cellSize,
     design;
 
+let ALERTS;
+
+function showAlert(alertData){
+  const { title = '', message = '', buttons = null } = alertData;
+  Alert.alert(title, message, buttons);
+}
 
 export default class DesignPage extends Component {
   constructor(props){
     super(props);
 
+    ALERTS = {
+        SELECTED_DESIGNS_OVERFLOW: {
+          title: 'Oops...',
+          message:'You are able to add only 12 designs to selected. Remove one design from selected and try again.',
+          buttons: [{ text: 'GOT IT!'}]
+        },
+        SELECTED_DESIGN_DUPLICATE:{
+          title: 'Oops...',
+          message: `This design exists in list of selected designs. You can't add it twice!`,
+          buttons: [{ text: 'GOT IT!' }]
+        },
+        SELECTED_DESIGN_ADDED: {
+          title: 'Congratulations!',
+          message: 'Design has been successfuly added to selected designs.',
+          buttons: [{ text: 'OK'}]
+        },
+        EDIT_NEW_DESIGN: {
+          title: 'Edit new design', 
+          message: 'Do you want to save current design?', 
+          buttons: [{ text: 'YES', onPress: this.saveDesign }, { text: 'NO', onPress : this.initNewDesign }]
+        },
+        DESIGN_HAS_BEEN_SAVED: {
+          title: 'Your design has been saved!', 
+          message: 'Do you want to create new design or stay on this one?', 
+          buttons: [{ text: 'CLOSE'}, { text: 'NEW DESIGN', onPress : this.initNewDesign }]
+        }
+      };
+
     this.sendingDataToDeviceModalOnClose = this.sendingDataToDeviceModalOnClose.bind(this);
     this.getDataForSendingToDevice = this.getDataForSendingToDevice.bind(this);
+    this.saveDesign = this.saveDesign.bind(this);
+    this.initNewDesign = this.initNewDesign.bind(this);
   }
   componentWillMount(){
-
     const PADDING = 100;
     const CELL_DIMENSION = 5;
-
     rows = this.props.height / CELL_DIMENSION;
     cols =  this.props.width / CELL_DIMENSION;
-
-
     cellSize = Math.ceil((Dimensions.get('window').width - PADDING) / (Math.max(cols, rows) + 1));
     this.prepareGlassData(this.props.width, this.props.height);
     design  = new Design({
@@ -69,7 +101,6 @@ export default class DesignPage extends Component {
     config.repetitionCycle[0],
     config.timeSequence[0]
     );
-
     this.state = {
       verticalIndex : -1,
       horizontalIndex: 0,
@@ -81,9 +112,7 @@ export default class DesignPage extends Component {
       showConfigPanel: false,
       showSelectedDesignsPanel: false,
       showAllDesignsPanel: false,
-      // sendingDataToDeviceModalVisible: false,
-      sendingDataToDeviceModalVisible: true,
-      
+      sendingDataToDeviceModalVisible: false,
       bluetoothModalVisibility : false,
       bluetoothDeviceAddress : null,
       allDesigns: [],
@@ -94,9 +123,6 @@ export default class DesignPage extends Component {
       intervalTime : config.intervalTime[0],
     }
 
-  }
-  componentDidMount(){
-    
   }
 
   prepareGlassData(){
@@ -165,27 +191,10 @@ export default class DesignPage extends Component {
       activeDesignFromAll : index
     });
     this.saveGlassData();
-    Alert.alert('Your design has been saved!', 'Do you want to create new design or stay on this one?', [
-      {
-        text: 'CLOSE'
-      },
-      {
-        text: 'NEW DESIGN',
-        onPress : this.initNewDesign.bind(this)
-      }
-    ]);
+    showAlert(ALERTS.DESIGN_HAS_BEEN_SAVED);
   }
   editNewDesign(){
-    Alert.alert('Edit new design', 'Do you want to save current design?', [
-      {
-        text: 'YES',
-        onPress: this.saveDesign.bind(this)
-      },
-      {
-        text: 'NO',
-        onPress : this.initNewDesign.bind(this)
-      }
-    ]);
+    showAlert(ALERTS.EDIT_NEW_DESIGN);
   }
 
   _setModalVisibility(value){
@@ -244,47 +253,22 @@ export default class DesignPage extends Component {
   }
 
   moveDesignToSelected(){
-    let index = this.state.activeDesignFromAll,
-        designs = this.state.selectedDesigns;
+    let { activeDesignFromAll: index, selectedDesigns: designs } = this.state;
     if (index === null)
       return;
     if (designs.indexOf(null) === -1){
-      Alert.alert(
-        'Oops...',
-        'You are able to add only 12 designs to selected. Remove one from selected and try again.',
-        [
-          {
-            text: 'GOT IT!'
-          }
-        ]
-      );
+      showAlert(ALERTS.SELECTED_DESIGNS_OVERFLOW);
       return;
     }
     if (designs.indexOf(''+index) !== -1){
-      Alert.alert(
-        'Oops...',
-        `This design exists in list of selected designs. You can't add it twice!`,
-        [
-          {
-            text: 'GOT IT!'
-          }
-        ]
-      );
+      showAlert(ALERTS.SELECTED_DESIGN_DUPLICATE);
       return;
     }
     designs[designs.indexOf(null)] = index;
     this.setState({
       selectedDesigns: designs,
     });
-    Alert.alert(
-      'Congratulations!',
-      `Design ${index} has been successfuly added to selected designs.`,
-      [
-        {
-          text: 'OK'
-        }
-      ]
-    );
+    showAlert(ALERTS.SELECTED_DESIGN_ADDED);
     this.saveGlassData();
   }
 
