@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Modal,
-  TouchableHighlight,
   Dimensions,
   Picker,
   Switch,
@@ -26,6 +25,7 @@ import AllDesignsPanel from './panels/AllDesignsPanel';
 import { Design, DESIGN_INDICATOR_TYPES, toggleDesignIndicator }  from '../models/Design';
 import Joystick from './Joystick';
 import SendingDataToDeviceModal from '../modals/SendingDataToDeviceModal';
+import Button from './Button';
 
 
 function arrayRowFactory(length, value = 0) {
@@ -342,26 +342,30 @@ export default class DesignPage extends Component {
           </View>
           <View style={styles.controlPanel}>
             <View style={styles.leftControlPanel}>
-              <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={this.editNewDesign}
+              <Button buttonStyle = { styles.leftControlPanelButton }
+                      onPress = { this.editNewDesign }
+                      textStyle = { panelStyles.actionButtonText }
               >
-                <Text style={panelStyles.actionButtonText}>Edit New Design</Text>
-              </TouchableHighlight>
-              <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={() => this._showAllDesignsPanelVisibility(true)}
+                Edit New Design
+              </Button>
+              <Button buttonStyle = { styles.leftControlPanelButton }
+                      onPress = { () => this._showAllDesignsPanelVisibility(true) }
+                      textStyle = { panelStyles.actionButtonText }
               >
-                <Text style={panelStyles.actionButtonText}>Designs List with or without Motion</Text>
-              </TouchableHighlight>
-              <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={this.saveDesign}
+                Designs List with or without Motion
+              </Button>
+              <Button buttonStyle = { styles.leftControlPanelButton }
+                      onPress = { this.saveDesign }
+                      textStyle = { {color: '#fff', fontSize: 18, textAlign: 'center'} }
               >
-                <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>Save & Load</Text>
-              </TouchableHighlight>
-              <TouchableHighlight style={styles.leftControlPanelButton}
-                onPress={this._runAndStopButtonPress}
+                Save & Load
+              </Button>
+              <Button buttonStyle = { styles.leftControlPanelButton }
+                      onPress = { this._runAndStopButtonPress }
+                      textStyle = { {color: '#fff', fontSize: 18, textAlign: 'center'} }
               >
-                <Text style={{color: '#fff', fontSize: 18, textAlign: 'center'}}>RUN & STOP</Text>
-              </TouchableHighlight>
+                RUN & STOP
+              </Button>
             </View>
             <View style={{justifyContent: 'center', alignItems: 'center', width: 160}}>
               <Image source={LOGO} style={{width: 160, resizeMode: 'stretch', height: 100}}/>
