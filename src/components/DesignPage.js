@@ -42,6 +42,7 @@ let rows,
     cellSize,
     design;
 
+
 export default class DesignPage extends Component {
   constructor(props){
     super(props);
@@ -88,7 +89,7 @@ export default class DesignPage extends Component {
       devices : [],
       activeDesignFromAll : null,
       activeDesignFromSelected : null,
-      intervalTime : config.intervalTime[0]
+      intervalTime : config.intervalTime[0],
     }
 
   }
@@ -149,7 +150,7 @@ export default class DesignPage extends Component {
       showAllDesignsPanel: false,
       activeDesignFromAll : null,
       activeDesignFromSelected : null,
-      intervalTime : config.intervalTime[0]
+      intervalTime : config.intervalTime[0],
     });
   }
 
@@ -390,9 +391,8 @@ export default class DesignPage extends Component {
     const { width, height } = this.props;
     const { horizontal, vertical } = this.state.currentDesign.indicators;
     const hI = this.transformIndicatorsDataToSpecificFormat(horizontal.join('')),
-          wI = this.transformIndicatorsDataToSpecificFormat(vertical.join(''));
-    return `${hI}${wI}2`;
-    // return `128`;
+          vI = this.transformIndicatorsDataToSpecificFormat(vertical.join('').slice(0, rows));
+    return `${hI}${vI}0`;
   }
 
   // adapter
@@ -401,7 +401,6 @@ export default class DesignPage extends Component {
     const bitPortion = 3;
     for (let i = 0; i < indicators.length; i += bitPortion){
       result += parseInt(indicators.substr(i, bitPortion), 2);
-      // result += i % 2 === 1? '0':'';
     }
     return result;
   }
@@ -411,6 +410,7 @@ export default class DesignPage extends Component {
     this.setState({
       sendingDataToDeviceModalVisible: true
     });
+    const data = this.getDataForSendingToDevice();
   }
 
   sendingDataToDeviceModalOnClose(){

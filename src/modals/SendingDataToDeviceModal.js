@@ -97,7 +97,7 @@ export default class BluetoothConnectionModal extends Component{
     const { serviceUUID, characteristicUUID } = this.state;
     BleManager.write(device.id, serviceUUID, characteristicUUID, data)
     .then(() => {
-      Alert.alert('Success', `Next data has been transferred:/n${data}`);
+      Alert.alert('Success', `Next data has been transferred:\n${data}`);
     })
     .catch((error) => {
       Alert.alert('Error', 'Error occured while writing data. Try again.');
@@ -135,12 +135,7 @@ export default class BluetoothConnectionModal extends Component{
               <Text style = { styles.title } >Run design on device</Text>
               <Text style = { styles.description } >To display design on a device press "Scan" button. After that choose a device from the list of available devices and press on it to send data.</Text>
               { this.getDevices() }
-
-              <TextInput
-                value = { this.state.data }
-                onChangeText = { (data) =>  this.setState({ data })}
-                placeholder = {'Data'}
-              />
+              
               <Text style = { styles.description } >Configuration</Text>
               <TextInput
                 value = { this.state.serviceUUID }
