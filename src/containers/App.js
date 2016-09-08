@@ -35,7 +35,7 @@ export default class App extends Component {
     return (
           <View style={styles.applicationContainer}>
             <Navigator
-              initialRoute={ { id : 'DesignPage' } }
+              initialRoute={ { id : 'MainPage' } }
               renderScene={this.navigatorRenderScene.bind(this)}
               configureScene={this.navigatorConfigureScene.bind(this)}
             />
@@ -56,8 +56,8 @@ export default class App extends Component {
       return <MainPage setDimensions={this._setDimensions.bind(this)} navigator={navigator}/>
      }
      if (routeID === 'DesignPage'){
-       // return <DesignPage width={this.state.width} height={this.state.height} navigator={navigator}/>
-       return <DesignPage width={'30'} height={'60'} navigator={navigator}/>
+       return <DesignPage width={this.state.width} height={this.state.height} navigator={navigator}/>
+       // return <DesignPage width={'30'} height={'60'} navigator={navigator}/>
     }
   }
 }
