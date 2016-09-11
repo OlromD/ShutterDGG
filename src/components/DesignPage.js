@@ -9,7 +9,8 @@ import {
   Image,
   Alert,
   AsyncStorage,
-  StyleSheet
+  StyleSheet,
+  TouchableHighlight
 } from 'react-native';
 
 import GlassGrid from './grid/GlassGrid';
@@ -340,44 +341,65 @@ export default class DesignPage extends Component {
           <View style={styles.controlPanel}>
             <View style={styles.leftControlPanel}>
               <Button buttonStyle = { styles.leftControlPanelButton }
-                      onPress = { this.editNewDesign }
                       textStyle = { panelStyles.actionButtonText }
+                      onPress={ () => this._setConfigPanelVisibility(true)}
               >
-                Edit New Design
+                Movement & Time Sequence of a Single Design
               </Button>
               <Button buttonStyle = { styles.leftControlPanelButton }
-                      onPress = { () => this._showAllDesignsPanelVisibility(true) }
                       textStyle = { panelStyles.actionButtonText }
+                      onPress = { () => this._showAllDesignsPanelVisibility(true) }
               >
                 Designs List with or without Motion
               </Button>
               <Button buttonStyle = { styles.leftControlPanelButton }
-                      onPress = { this.saveDesign }
-                      textStyle = { {color: '#fff', fontSize: 18, textAlign: 'center'} }
+                      textStyle = { panelStyles.actionButtonText }
+                      onPress = { () => {this._showSelectedDesignsPanelVisibility(true)} }
               >
-                Save & Load
+                Movement & Time Sequence of Multiple Designs
               </Button>
               <Button buttonStyle = { styles.leftControlPanelButton }
-                      onPress = { this._runAndStopButtonPress }
-                      textStyle = { {color: '#fff', fontSize: 18, textAlign: 'center'} }
+                      textStyle = { panelStyles.actionButtonText }
+                      onPress = { () => {this._showSelectedDesignsPanelVisibility(true)} }
               >
-                RUN & STOP
+                Choose/Change block of 2-12 designs
               </Button>
             </View>
-            <View style={{justifyContent: 'center', alignItems: 'center', width: 160}}>
-              <Image source={LOGO} style={{width: 160, resizeMode: 'stretch', height: 100}}/>
+            <View style = { {justifyContent: 'center', alignItems: 'center', width: 160} }>
+              <Image source = { LOGO } style = { {width: 160, resizeMode: 'stretch', height: 100} }/>
             </View>
-            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems:'center'}}>
-              
-              <View style = {{ width: 200}}>
-                <Joystick
-                  onUpButtonPress = { this._moveUp }
-                  onDownButtonPress = { this._moveDown }
-                  onLeftButtonPress = { this._moveLeft }
-                  onRightButtonPress = { this._moveRight }
-                  onOKButtonPress = { this._OKButtonPress }
-                />
+            <View style = { {flex: 1, flexDirection: 'row'} }>
+              <View style = { {flex: 1, flexDirection: 'column'} }>
+                <View style = { {flex: 2, justifyContent: 'flex-end', alignItems: 'center'} }>
+                  <Button buttonStyle = { styles.editNewDesignButton }
+                          textStyle = { panelStyles.actionButtonText }
+                          onPress = { this.editNewDesign.bind(this) }
+                  >
+                    Edit New Design
+                  </Button>
+                </View>
+                <View style = { {flex: 3, flexDirection: 'row', justifyContent: 'center'} }>
+                  <Button buttonStyle = { styles.rightPanelActionButton }
+                          textStyle = { {color: '#fff', fontSize: 18, textAlign: 'center'} }
+                          onPress = { this.saveDesign }
+                  >
+                    Save & Load
+                  </Button>
+                  <Button buttonStyle = { styles.rightPanelActionButton }
+                          textStyle = { {color: '#fff', fontSize: 18, textAlign: 'center'} }
+                          onPress = { this._runAndStopButtonPress }
+                  >
+                    RUN & STOP
+                  </Button>
+                </View>
               </View>
+              <Joystick
+                onUpButtonPress = { this._moveUp }
+                onDownButtonPress = { this._moveDown }
+                onLeftButtonPress = { this._moveLeft}
+                onRightButtonPress = { this._moveRight }
+                onOKButtonPress = { this._OKButtonPress }
+              />
             </View>
           </View>
         </View>
