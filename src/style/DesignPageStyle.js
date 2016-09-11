@@ -61,7 +61,8 @@ export default StyleSheet.create({
     color: '#fff',
     fontSize: 22,
     textAlign: 'left',
-    flex: 1
+    flex: 1,
+    marginLeft: 10
   },
   titleCaret : {
     color: '#fff',

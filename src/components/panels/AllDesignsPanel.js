@@ -86,7 +86,6 @@ export default class AllDesignsPanel extends Component {
         <View style={styles.panelBody}>
           <View style={styles.panelPropsContainer}>
             <View style={styles.panelPropTitle}>
-              <Text style={styles.titleCaret}>&or;</Text>
               <Text style={styles.panelPropTitleText}>Designs List</Text>
             </View>
             <View style={styles.panelPropDesignsTable}>

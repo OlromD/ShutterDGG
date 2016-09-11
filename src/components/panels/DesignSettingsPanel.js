@@ -83,21 +83,18 @@ export default class DesignSettingsPanel extends Component {
           </View>
           <View style={styles.panelPropsContainer}>
             <View style={styles.panelPropTitle}>
-              <Text style={styles.titleCaret}>&or;</Text>
               <Text style={styles.panelPropTitleText}>Moving Sequences</Text>
             </View>
             <View style={styles.panelPropList}>
               { this._getMovingSequenceListItems() }
             </View>
             <View style={styles.panelPropTitle}>
-              <Text style={styles.titleCaret}>&or;</Text>
               <Text style={styles.panelPropTitleText}>Time Sequences (Second)</Text>
             </View>
             <View style={styles.panelPropTable}>
               { this._getTimeSequenceTableItems() }
             </View>
             <View style={styles.panelPropTitle}>
-              <Text style={styles.titleCaret}>&or;</Text>
               <Text style={styles.panelPropTitleText}>Repetition Cycle in Single Design</Text>
             </View>
             <View style={styles.panelPropTable}>

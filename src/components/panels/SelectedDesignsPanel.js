@@ -98,14 +98,12 @@ export default class SelectedDesignsPanel extends Component {
           </View>
           <View style={styles.panelPropsContainer}>
             <View style={styles.panelPropTitle}>
-              <Text style={[styles.titleCaret, {width: 40}]}>&or;</Text>
               <Text style={[styles.panelPropTitleText, {fontSize: 20}]}>Choose/Change up to 12 designs</Text>
             </View>
             <View style={styles.panelPropTable}>
               { this._getSelectedDesignsTable() }
             </View>
             <View style={styles.panelPropTitle}>
-              <Text style={[styles.titleCaret, {width: 40}]}>&or;</Text>
               <Text style={[styles.panelPropTitleText, {fontSize: 20}]}>Interval Time within Designs in Second(s)</Text>
             </View>
             <View style={styles.panelPropTable}>

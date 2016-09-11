@@ -396,7 +396,7 @@ export default class DesignPage extends Component {
               <Joystick
                 onUpButtonPress = { this._moveUp }
                 onDownButtonPress = { this._moveDown }
-                onLeftButtonPress = { this._moveLeft}
+                onLeftButtonPress = { this._moveLeft }
                 onRightButtonPress = { this._moveRight }
                 onOKButtonPress = { this._OKButtonPress }
               />
