@@ -99,6 +99,8 @@ export default class DesignPage extends Component {
     this._showAllDesignsPanelVisibility = this._showAllDesignsPanelVisibility.bind(this);
     this.saveDesign = this.saveDesign.bind(this);
     this._runAndStopButtonPress = this._runAndStopButtonPress.bind(this);
+    this.getDataForSendingToDevice = this.getDataForSendingToDevice.bind(this);
+    this.getDesignData = this.getDesignData.bind(this);
   }
   componentWillMount(){
     const PADDING = 100;
@@ -267,7 +269,7 @@ export default class DesignPage extends Component {
   }
 
   moveDesignToSelected(){
-    let { activeDesignFromAll: index, selectedDesigns: designs } = this.state;
+    let { activeDesignFromAll: index, selectedDesigns: designs} = this.state;
     if (index === null)
       return;
     if (designs.indexOf(null) === -1){
@@ -413,19 +415,32 @@ export default class DesignPage extends Component {
   }
 
   getDataForSendingToDevice(){
-    const { width, height } = this.props;
-    const { horizontal, vertical } = this.state.currentDesign.indicators;
-    const hI = this.transformIndicatorsDataToSpecificFormat(horizontal.join('')),
-          vI = this.transformIndicatorsDataToSpecificFormat(vertical.join('').slice(0, rows));
-    return `${hI}${vI}0`;
+    const { selectedDesigns, allDesigns } = this.state;
+    const designs = selectedDesigns.map((index) => allDesigns[index]?allDesigns[index]:null);
+    return designs.map((design) => {
+      return (design !== null)?this.getDesignData(design):'';
+    }).join('');
+  }
+
+  getDesignData(design){
+    const BIT_PORTION = 3,
+          radix = 10;
+    const { horizontal, vertical } = design.indicators;
+    const hIndicators = this.encodeIndicators(horizontal.join(''), BIT_PORTION, radix),
+          vIndicators = this.encodeIndicators(vertical.join(''), BIT_PORTION, radix);
+    const animationType = config.movingSequence.indexOf(design.animationType),
+          time = config.timeSequence.indexOf(design.time),
+          repetitionNumber = config.repetitionCycle.indexOf(design.repetitionNumber);
+
+    return `${hIndicators}${vIndicators}${animationType}${time}${repetitionNumber}`;
+
   }
 
   // adapter
-  transformIndicatorsDataToSpecificFormat(indicators){
+  encodeIndicators(indicators, bitPortion, radix){
     let result = '';
-    const bitPortion = 3;
     for (let i = 0; i < indicators.length; i += bitPortion){
-      result += parseInt(indicators.substr(i, bitPortion), 2);
+      result += parseInt(indicators.substr(i, bitPortion), 2).toString(radix);
     }
     return result;
   }
@@ -436,6 +451,7 @@ export default class DesignPage extends Component {
       sendingDataToDeviceModalVisible: true
     });
     const data = this.getDataForSendingToDevice();
+    Alert.alert('Data', data);
   }
 
   sendingDataToDeviceModalOnClose(){

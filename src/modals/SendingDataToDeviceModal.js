@@ -56,6 +56,7 @@ export default class BluetoothConnectionModal extends Component{
   }
 
   componentWillMount(){
+    
     NativeAppEventEmitter
       .addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral );
     NativeAppEventEmitter
