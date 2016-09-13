@@ -408,7 +408,7 @@ export default class DesignPage extends Component {
         <SendingDataToDeviceModal
           visible = { this.state.sendingDataToDeviceModalVisible } 
           onClose = { this.sendingDataToDeviceModalOnClose }
-          data = { this.getDataForSendingToDevice() }
+          data = { this.getDesignData(this.state.currentDesign) }
         />
       </View>
     );
@@ -432,7 +432,8 @@ export default class DesignPage extends Component {
           time = config.timeSequence.indexOf(design.time),
           repetitionNumber = config.repetitionCycle.indexOf(design.repetitionNumber);
 
-    return `${hIndicators}${vIndicators}${animationType}${time}${repetitionNumber}`;
+    // return `${hIndicators}${vIndicators}${animationType}${time}${repetitionNumber}`;
+    return `${hIndicators}${vIndicators}0`;
 
   }
 
@@ -450,7 +451,8 @@ export default class DesignPage extends Component {
     this.setState({
       sendingDataToDeviceModalVisible: true
     });
-    const data = this.getDataForSendingToDevice();
+    const { currentDesign } = this.state;
+    const data = this.getDesignData(currentDesign);
     Alert.alert('Data', data);
   }
 
