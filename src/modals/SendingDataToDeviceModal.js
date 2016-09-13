@@ -29,7 +29,7 @@ const ALERTS = {
             title: 'Ooops...',
             message: 'Could not load design on device. Please, try again.'
           }
-        }
+        },
       },
       SERVICE_UUID = 'CA8175D3-7F66-46DA-9334-B4467A4247A3',
       CHARACTERISTIC_UUID = 'CA8175D3-7F66-46DA-9334-B4467A4247A5';
@@ -53,6 +53,7 @@ export default class BluetoothConnectionModal extends Component{
     this.handleStopScan = this.handleStopScan.bind(this);
     this.connectToDevice = this.connectToDevice.bind(this);
     this.writeDataToDevice = this.writeDataToDevice.bind(this);
+    this.writeDataForNextDesign = this.writeDataForNextDesign.bind(this);
   }
 
   componentWillMount(){
@@ -107,11 +108,34 @@ export default class BluetoothConnectionModal extends Component{
   }
 
   onDeviceItemPress(device){
-    this.connectToDevice(device, this.writeDataToDevice);
+    Alert.alert('Choose action', 'Choose what data you wanna send', [
+    {
+      text: 'Next design',
+      onPress: () => this.connectToDevice(device, this.writeDataForNextDesign)
+    },
+    {
+      text: 'All design',
+      onPress: () => this.connectToDevice(device, this.writeDataToDevice)
+    }
+    ]);
+    
   }
 
   writeDataToDevice(device){
     const { data } = this.props,
+          { success, fail } = ALERTS.writing;
+    BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, data)
+      .then(() => {
+        Alert.alert(success.title, success.message);
+      })
+      .catch(() => {
+        Alert.alert(fail.title, fail.message);
+      });
+  }
+
+  writeDataForNextDesign(device){
+    const NEXT_DESIGN_BYTE = '2';
+    const data = (new Array(30)).fill(0).join('') + NEXT_DESIGN_BYTE,
           { success, fail } = ALERTS.writing;
     BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, data)
       .then(() => {
