@@ -409,6 +409,7 @@ export default class DesignPage extends Component {
           visible = { this.state.sendingDataToDeviceModalVisible } 
           onClose = { this.sendingDataToDeviceModalOnClose }
           data = { this.getDesignData(this.state.currentDesign) }
+          design = { this.state.currentDesign }
         />
       </View>
     );
@@ -428,12 +429,13 @@ export default class DesignPage extends Component {
     const { horizontal, vertical } = design.indicators;
     const hIndicators = this.encodeIndicators(horizontal.join(''), BIT_PORTION, radix),
           vIndicators = this.encodeIndicators(vertical.join(''), BIT_PORTION, radix);
-    const animationType = config.movingSequence.indexOf(design.animationType),
+    let animationType = config.movingSequence.indexOf(design.animationType),
           time = config.timeSequence.indexOf(design.time),
           repetitionNumber = config.repetitionCycle.indexOf(design.repetitionNumber);
+          
 
     // return `${hIndicators}${vIndicators}${animationType}${time}${repetitionNumber}`;
-    return `${hIndicators}${vIndicators}0`;
+    return `${hIndicators}${vIndicators}2${time}`;
 
   }
 
@@ -453,7 +455,7 @@ export default class DesignPage extends Component {
     });
     const { currentDesign } = this.state;
     const data = this.getDesignData(currentDesign);
-    Alert.alert('Data', data);
+    // Alert.alert('Data', data);
   }
 
   sendingDataToDeviceModalOnClose(){

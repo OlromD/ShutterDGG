@@ -110,11 +110,11 @@ export default class BluetoothConnectionModal extends Component{
   onDeviceItemPress(device){
     Alert.alert('Choose action', 'Choose what data you wanna send', [
     {
-      text: 'Next design',
+      text: 'Next design on the glass',
       onPress: () => this.connectToDevice(device, this.writeDataForNextDesign)
     },
     {
-      text: 'All design',
+      text: 'Current design data',
       onPress: () => this.connectToDevice(device, this.writeDataToDevice)
     }
     ]);
@@ -134,8 +134,9 @@ export default class BluetoothConnectionModal extends Component{
   }
 
   writeDataForNextDesign(device){
-    const NEXT_DESIGN_BYTE = '2';
-    const data = (new Array(30)).fill(0).join('') + NEXT_DESIGN_BYTE,
+    const { design } = this.props;
+    const NEXT_DESIGN_BYTE = '1';
+    const data = (new Array(30)).fill(0).join('') + NEXT_DESIGN_BYTE + design.time,
           { success, fail } = ALERTS.writing;
     BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, data)
       .then(() => {
@@ -149,6 +150,8 @@ export default class BluetoothConnectionModal extends Component{
 
   onScanButtonPress(){
     this.handleScan();
+    // Alert.alert(this.props.data);
+    // this.onDeviceItemPress();
   }
 
   connectToDevice(device, writeDataCallback){
@@ -163,7 +166,7 @@ export default class BluetoothConnectionModal extends Component{
   }
 
   render(){
-    const { visible, onClose } = this.props,
+    const { visible, onClose, data, design } = this.props,
           { scanning } = this.state;
     return (
         <Modal animationType = { "slide" }
@@ -188,6 +191,7 @@ export default class BluetoothConnectionModal extends Component{
                   Close
                 </Button>
               </View>
+              <Text style = { [styles.description, { fontSize: 15 }] }>{ `Design data: ${data}\nTime = ${design.time}` }</Text>
             </View>
           </View>
         </Modal>
@@ -200,8 +204,8 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,.7)',
-    justifyContent: 'center',
-    alignItems: 'center'
+    // justifyContent: 'center',
+    // alignItems: 'center'
   },
   content: {
     width: 400,
