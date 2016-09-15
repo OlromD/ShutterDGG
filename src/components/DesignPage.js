@@ -105,6 +105,7 @@ export default class DesignPage extends Component {
     this.getIntervalTimeSpecificData = this.getIntervalTimeSpecificData.bind(this);
     this.getDataForAutomaticallySending = this.getDataForAutomaticallySending.bind(this);
     this.getDataForManuallySending = this.getDataForManuallySending.bind(this);
+    this.getDataForLoadingToDevice = this.getDataForLoadingToDevice.bind(this);
   }
   componentWillMount(){
     const PADDING = 100;
@@ -423,6 +424,7 @@ export default class DesignPage extends Component {
           onClose = { this.sendingDataToDeviceModalOnClose }
           dataForManuallySending = { this.getDataForManuallySending() }
           dataForAutomaticallySending = { this.getDataForAutomaticallySending() }
+          designsDataForLoading = { this.getDataForLoadingToDevice() }
           design = { this.state.currentDesign }
         />
       </View>
@@ -430,40 +432,53 @@ export default class DesignPage extends Component {
   }
 
   getDataForAutomaticallySending(){
-    const NEXT_DESIGN_BYTE = '1',
+    const CONTROL_BYTE = '1',
           timeInterval = this.getIntervalTimeSpecificData();
-    const data = (new Array(30)).fill(0).join('') + NEXT_DESIGN_BYTE + timeInterval;
+    const data = (new Array(30)).fill(0).join('') + CONTROL_BYTE + timeInterval;
+    // const data = this.getDataForSendingToDevice();
     return data;
   }
 
   getDataForManuallySending(){
-    const data = this.getDesignData(this.state.currentDesign);
+    const CONTROL_BYTE = '2';
+    const data = this.getDesignData(this.state.currentDesign, 0, CONTROL_BYTE);
     return data;
-    
+
   }
 
   getDataForSendingToDevice(){
+    const CONTROL_BYTE = '2';
     const { selectedDesigns, allDesigns } = this.state;
     const designs = selectedDesigns.map((index) => allDesigns[index]?allDesigns[index]:null);
-    return designs.map((design) => {
-      return (design !== null)?this.getDesignData(design):'';
+    return designs.map((design, index) => {
+      return (design !== null)?this.getDesignData(design, index, CONTROL_BYTE):'';
     }).join('');
   }
+  getDataForLoadingToDevice(){
+    const CONTROL_BYTE = '3';
+    const { selectedDesigns, allDesigns } = this.state;
+    const designs = selectedDesigns.map((index) => allDesigns[index]?allDesigns[index]:null);
+    return designs.map((design, index) => {
+      return (design !== null)?this.getDesignData(design, index, CONTROL_BYTE):'';
+    }).filter((el) => el !== '');
+  }
 
-  getDesignData(design){
+  getDesignData(design, index = -1, controlByte){
     const BIT_PORTION = 3,
           radix = 10;
     const { horizontal, vertical } = design.indicators;
     const hIndicators = this.encodeIndicators(horizontal.join(''), BIT_PORTION, radix),
           vIndicators = this.encodeIndicators(vertical.join(''), BIT_PORTION, radix);
-    const TIME_OFFSET = 1;
-    let animationType = config.movingSequence.indexOf(design.animationType),
-          time = config.timeSequence.indexOf(design.time) + TIME_OFFSET,
-          repetitionNumber = config.repetitionCycle.indexOf(design.repetitionNumber);
-          
+    const TIME_OFFSET = 1,
+          ANIMATION_TYPE_OFFSET = 1;
+    let animationType = config.movingSequence.indexOf(design.animationType) + ANIMATION_TYPE_OFFSET,
+        time = config.timeSequence.indexOf(design.time) + TIME_OFFSET,
+        repetitionNumber = config.repetitionCycle.indexOf(design.repetitionNumber);
+    const INDEX_OFFSET = 1,
+          indexHEX = (index + INDEX_OFFSET).toString(16);     
 
     // return `${hIndicators}${vIndicators}${animationType}${time}${repetitionNumber}`;
-    return `${hIndicators}${vIndicators}2${time}`;
+    return `${hIndicators}${vIndicators}${controlByte}${index !== -1?indexHEX: ''}`;
 
   }
 

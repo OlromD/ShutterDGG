@@ -54,6 +54,7 @@ export default class BluetoothConnectionModal extends Component{
     this.connectToDevice = this.connectToDevice.bind(this);
     this.writeManuallyDataToDevice = this.writeManuallyDataToDevice.bind(this);
     this.writeAutomaticallyDataToDevice = this.writeAutomaticallyDataToDevice.bind(this);
+    this.writeDesignsData = this.writeDesignsData.bind(this);
   }
 
   componentWillMount(){
@@ -116,6 +117,10 @@ export default class BluetoothConnectionModal extends Component{
     {
       text: 'Manually',
       onPress: () => this.connectToDevice(device, this.writeManuallyDataToDevice)
+    },
+    {
+      text: 'Load designs',
+      onPress: () => this.connectToDevice(device, this.writeDesignsData)
     }
     ]);
     
@@ -144,6 +149,37 @@ export default class BluetoothConnectionModal extends Component{
         Alert.alert(fail.title, fail.message);
       });
   }
+
+  writeDesignsData(device){
+    const { designsDataForLoading: designs } = this.props;
+    BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, designs[0])
+      .then(() => {
+        Alert.alert('Design 1 has been loaded');
+        setTimeout(() => {
+          BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, designs[1])
+          .then(() => {
+            Alert.alert('Design 2 has been loaded');
+
+          })
+          .catch(() => {
+            Alert.alert('Fail', 'Try to load again');
+          });
+        }, 1000);
+      })
+      .catch(() => {
+        Alert.alert('Fail', 'Try to load again');
+      });
+    // let promises = [];
+    // designs.forEach((design) => {
+    //   promises.push(BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, design));
+    // });
+    // // BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, designs[0])
+    // Promise.all(promises)
+    //   .then(
+    //     () => Alert.alert('Success', 'One designs have been loaded on the glass!'),
+    //     () => Alert.alert('Fail', 'Try to load again!')
+    //   );
+  }
   
 
   onScanButtonPress(){
@@ -164,7 +200,7 @@ export default class BluetoothConnectionModal extends Component{
   }
 
   render(){
-    const { visible, onClose, dataForAutomaticallySending, dataForManuallySending } = this.props,
+    const { visible, onClose, dataForAutomaticallySending, dataForManuallySending, designsDataForLoading } = this.props,
           { scanning } = this.state;
     return (
         <Modal animationType = { "slide" }
@@ -194,6 +230,9 @@ export default class BluetoothConnectionModal extends Component{
               </Text>
               <Text style = { [styles.description, { fontSize: 15 }] }>
                 { `Manually data:\n${ dataForManuallySending } ` }
+              </Text>
+              <Text style = { [styles.description, { fontSize: 15 }] }>
+                { `Designs for loading:\n${ JSON.stringify(designsDataForLoading) } ` }
               </Text>
             </View>
           </View>
