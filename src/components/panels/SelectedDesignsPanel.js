@@ -13,11 +13,6 @@ export default class SelectedDesignsPanel extends Component {
     super(props);
   }
 
-  componentWillMount(){
-    this.setState({
-      intervalTime : config.intervalTime[0]
-    });
-  }
   _getSelectedDesignsTable(){
     const { designs, active, onDesignItemPress } = this.props;
     return designs.map((el, index) => (
@@ -41,13 +36,14 @@ export default class SelectedDesignsPanel extends Component {
   }
 
   _getIntervalTimeTableItems(){
+    const { intervalTime, onIntervalTimeChange } = this.props;
     return config.intervalTime.map((el) => (
       <TouchableHighlight
-        style={styles.panelPropTableItem}
-        key={el}
-        onPress={() => this.setState({intervalTime : el})}
+        style = { styles.panelPropTableItem }
+        key = { el }
+        onPress = { () => onIntervalTimeChange(el) }
       >
-        <Text style={[styles.panelPropTableItemText, {color: (this.state.intervalTime === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
+        <Text style={[styles.panelPropTableItemText, {color: (intervalTime === el)?'#68c6c8': '#999'}]} key={el}>{el}</Text>
       </TouchableHighlight>
     ));
   }

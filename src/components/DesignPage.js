@@ -101,6 +101,10 @@ export default class DesignPage extends Component {
     this._runAndStopButtonPress = this._runAndStopButtonPress.bind(this);
     this.getDataForSendingToDevice = this.getDataForSendingToDevice.bind(this);
     this.getDesignData = this.getDesignData.bind(this);
+    this.onIntervalTimeChange = this.onIntervalTimeChange.bind(this);
+    this.getIntervalTimeSpecificData = this.getIntervalTimeSpecificData.bind(this);
+    this.getDataForAutomaticallySending = this.getDataForAutomaticallySending.bind(this);
+    this.getDataForManuallySending = this.getDataForManuallySending.bind(this);
   }
   componentWillMount(){
     const PADDING = 100;
@@ -301,6 +305,13 @@ export default class DesignPage extends Component {
       horizontalIndex : 0
     })
   }
+
+  onIntervalTimeChange(intervalTime){
+    this.setState({
+      intervalTime
+    });
+  }
+
   render(){
     return (
       <View style={styles.container}>
@@ -328,6 +339,8 @@ export default class DesignPage extends Component {
                 designs = { this.state.selectedDesigns }
                 onDesignItemDelete = { this.deleteDesignsFromSelected }
                 active = { this.state.activeDesignFromSelected }
+                intervalTime = { this.state.intervalTime }
+                onIntervalTimeChange = { this.onIntervalTimeChange }
               />
               <AllDesignsPanel
                 onClose = { () => this._showAllDesignsPanelVisibility(false) }
@@ -408,11 +421,25 @@ export default class DesignPage extends Component {
         <SendingDataToDeviceModal
           visible = { this.state.sendingDataToDeviceModalVisible } 
           onClose = { this.sendingDataToDeviceModalOnClose }
-          data = { this.getDesignData(this.state.currentDesign) }
+          dataForManuallySending = { this.getDataForManuallySending() }
+          dataForAutomaticallySending = { this.getDataForAutomaticallySending() }
           design = { this.state.currentDesign }
         />
       </View>
     );
+  }
+
+  getDataForAutomaticallySending(){
+    const NEXT_DESIGN_BYTE = '1',
+          timeInterval = this.getIntervalTimeSpecificData();
+    const data = (new Array(30)).fill(0).join('') + NEXT_DESIGN_BYTE + timeInterval;
+    return data;
+  }
+
+  getDataForManuallySending(){
+    const data = this.getDesignData(this.state.currentDesign);
+    return data;
+    
   }
 
   getDataForSendingToDevice(){
@@ -429,8 +456,9 @@ export default class DesignPage extends Component {
     const { horizontal, vertical } = design.indicators;
     const hIndicators = this.encodeIndicators(horizontal.join(''), BIT_PORTION, radix),
           vIndicators = this.encodeIndicators(vertical.join(''), BIT_PORTION, radix);
+    const TIME_OFFSET = 1;
     let animationType = config.movingSequence.indexOf(design.animationType),
-          time = config.timeSequence.indexOf(design.time),
+          time = config.timeSequence.indexOf(design.time) + TIME_OFFSET,
           repetitionNumber = config.repetitionCycle.indexOf(design.repetitionNumber);
           
 
@@ -449,13 +477,17 @@ export default class DesignPage extends Component {
   }
   // adapter
 
+  getIntervalTimeSpecificData(){
+    const { intervalTime } = this.state,
+    INTERVAL_TIME_OFFSET = 1;
+    return config.intervalTime.indexOf(intervalTime) + INTERVAL_TIME_OFFSET;
+
+  }
+
   _runAndStopButtonPress(){
     this.setState({
       sendingDataToDeviceModalVisible: true
     });
-    const { currentDesign } = this.state;
-    const data = this.getDesignData(currentDesign);
-    // Alert.alert('Data', data);
   }
 
   sendingDataToDeviceModalOnClose(){
