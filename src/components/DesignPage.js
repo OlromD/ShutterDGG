@@ -51,6 +51,34 @@ export default class DesignPage extends Component {
   constructor(props){
     super(props);
 
+    
+
+    this.sendingDataToDeviceModalOnClose = this.sendingDataToDeviceModalOnClose.bind(this);
+    this.getDataForSendingToDevice = this.getDataForSendingToDevice.bind(this);
+    this.saveDesign = this.saveDesign.bind(this);
+    this.initNewDesign = this.initNewDesign.bind(this);
+    this._moveUp = this._moveUp.bind(this);
+    this._moveDown = this._moveDown.bind(this);
+    this._moveLeft = this._moveLeft.bind(this);
+    this._moveRight = this._moveRight.bind(this);
+    this._OKButtonPress = this._OKButtonPress.bind(this);
+    this._setConfigPanelVisibility = this._setConfigPanelVisibility.bind(this);
+    this._showSelectedDesignsPanelVisibility = this._showSelectedDesignsPanelVisibility.bind(this);
+    this.deleteDesignsFromSelected = this.deleteDesignsFromSelected.bind(this);
+    this._showAllDesignsPanelVisibility = this._showAllDesignsPanelVisibility.bind(this);
+    this.onAllDesignsItemPress = this.onAllDesignsItemPress.bind(this);
+    this.moveDesignToSelected = this.moveDesignToSelected.bind(this);
+    this.deleteDesignFromAll = this.deleteDesignFromAll.bind(this);
+    this.editNewDesign = this.editNewDesign.bind(this);
+    this._showAllDesignsPanelVisibility = this._showAllDesignsPanelVisibility.bind(this);
+    this._runAndStopButtonPress = this._runAndStopButtonPress.bind(this);
+    this.getDataForSendingToDevice = this.getDataForSendingToDevice.bind(this);
+    this.getDesignData = this.getDesignData.bind(this);
+    this.onIntervalTimeChange = this.onIntervalTimeChange.bind(this);
+    this.getIntervalTimeSpecificData = this.getIntervalTimeSpecificData.bind(this);
+    this.getDataForAutomaticallySending = this.getDataForAutomaticallySending.bind(this);
+    this.getDataForManuallySending = this.getDataForManuallySending.bind(this);
+    this.getDataForLoadingToDevice = this.getDataForLoadingToDevice.bind(this);
     ALERTS = {
         SELECTED_DESIGNS_OVERFLOW: {
           title: 'Oops...',
@@ -78,34 +106,6 @@ export default class DesignPage extends Component {
           buttons: [{ text: 'CLOSE'}, { text: 'NEW DESIGN', onPress : this.initNewDesign }]
         }
       };
-
-    this.sendingDataToDeviceModalOnClose = this.sendingDataToDeviceModalOnClose.bind(this);
-    this.getDataForSendingToDevice = this.getDataForSendingToDevice.bind(this);
-    this.saveDesign = this.saveDesign.bind(this);
-    this.initNewDesign = this.initNewDesign.bind(this);
-    this._moveUp = this._moveUp.bind(this);
-    this._moveDown = this._moveDown.bind(this);
-    this._moveLeft = this._moveLeft.bind(this);
-    this._moveRight = this._moveRight.bind(this);
-    this._OKButtonPress = this._OKButtonPress.bind(this);
-    this._setConfigPanelVisibility = this._setConfigPanelVisibility.bind(this);
-    this._showSelectedDesignsPanelVisibility = this._showSelectedDesignsPanelVisibility.bind(this);
-    this.deleteDesignsFromSelected = this.deleteDesignsFromSelected.bind(this);
-    this._showAllDesignsPanelVisibility = this._showAllDesignsPanelVisibility.bind(this);
-    this.onAllDesignsItemPress = this.onAllDesignsItemPress.bind(this);
-    this.moveDesignToSelected = this.moveDesignToSelected.bind(this);
-    this.deleteDesignFromAll = this.deleteDesignFromAll.bind(this);
-    this.editNewDesign = this.editNewDesign.bind(this);
-    this._showAllDesignsPanelVisibility = this._showAllDesignsPanelVisibility.bind(this);
-    this.saveDesign = this.saveDesign.bind(this);
-    this._runAndStopButtonPress = this._runAndStopButtonPress.bind(this);
-    this.getDataForSendingToDevice = this.getDataForSendingToDevice.bind(this);
-    this.getDesignData = this.getDesignData.bind(this);
-    this.onIntervalTimeChange = this.onIntervalTimeChange.bind(this);
-    this.getIntervalTimeSpecificData = this.getIntervalTimeSpecificData.bind(this);
-    this.getDataForAutomaticallySending = this.getDataForAutomaticallySending.bind(this);
-    this.getDataForManuallySending = this.getDataForManuallySending.bind(this);
-    this.getDataForLoadingToDevice = this.getDataForLoadingToDevice.bind(this);
   }
   componentWillMount(){
     const PADDING = 100;
@@ -204,7 +204,7 @@ export default class DesignPage extends Component {
   }
 
   saveDesign(){
-    let designs = this.state.allDesigns;
+    let { allDesigns: designs } = this.state;
     const index = designs.indexOf(null);
     designs[index] = Object.assign({}, this.state.currentDesign);
     this.setState({
@@ -358,12 +358,6 @@ export default class DesignPage extends Component {
             <View style={styles.leftControlPanel}>
               <Button buttonStyle = { styles.leftControlPanelButton }
                       textStyle = { panelStyles.actionButtonText }
-                      onPress={ () => this._setConfigPanelVisibility(true)}
-              >
-                Movement & Time Sequence of a Single Design
-              </Button>
-              <Button buttonStyle = { styles.leftControlPanelButton }
-                      textStyle = { panelStyles.actionButtonText }
                       onPress = { () => this._showAllDesignsPanelVisibility(true) }
               >
                 Designs List with or without Motion
@@ -373,12 +367,6 @@ export default class DesignPage extends Component {
                       onPress = { () => {this._showSelectedDesignsPanelVisibility(true)} }
               >
                 Movement & Time Sequence of Multiple Designs
-              </Button>
-              <Button buttonStyle = { styles.leftControlPanelButton }
-                      textStyle = { panelStyles.actionButtonText }
-                      onPress = { () => {this._showSelectedDesignsPanelVisibility(true)} }
-              >
-                Choose/Change block of 2-12 designs
               </Button>
             </View>
             <View style = { {justifyContent: 'center', alignItems: 'center', width: 160} }>
