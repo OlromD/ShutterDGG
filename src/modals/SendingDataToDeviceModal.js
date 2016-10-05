@@ -42,7 +42,9 @@ export default class BluetoothConnectionModal extends Component{
 
     this.state = {
       scanning: false,
-      devices: []
+      devices: [],
+      loading: false,
+      loadedDesigns: 0
     };
 
     this.getDevices = this.getDevices.bind(this);
@@ -55,6 +57,7 @@ export default class BluetoothConnectionModal extends Component{
     this.writeManuallyDataToDevice = this.writeManuallyDataToDevice.bind(this);
     this.writeAutomaticallyDataToDevice = this.writeAutomaticallyDataToDevice.bind(this);
     this.writeDesignsData = this.writeDesignsData.bind(this);
+    this.loadDesign = this.loadDesign.bind(this);
   }
 
   componentWillMount(){
@@ -152,38 +155,70 @@ export default class BluetoothConnectionModal extends Component{
 
   writeDesignsData(device){
     const { designsDataForLoading: designs } = this.props;
-    BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, designs[0])
-      .then(() => {
-        Alert.alert('Design 1 has been loaded');
-        setTimeout(() => {
-          BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, designs[1])
-          .then(() => {
-            Alert.alert('Design 2 has been loaded');
+    this.setState({
+      loadedDesigns: 0
+    });
+    const DELAY = 300;
+    let loadingProcess;
+    let loadingChain = this.loadDesign(device, designs[designs.length - 1], () => {
+      const { designsDataForLoading:designs } = this.props;
+      Alert.alert('Success', `Loaded ${this.state.loadedDesigns} of ${designs.length}`);
+    });
+    for (let i = designs.length - 2; i >= 0; i--){
+      loadingChain = this.loadDesign(device, designs[i], loadingChain);
+    }
+    loadingChain();
+    // BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, designs[0])
+    //   .then(() => {
+    //     Alert.alert('Design 1 has been loaded');
+    //     setTimeout(() => {
+    //       BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, designs[1])
+    //       .then(() => {
+    //         Alert.alert('Design 2 has been loaded');
 
-          })
-          .catch(() => {
-            Alert.alert('Fail', 'Try to load again');
-          });
-        }, 1000);
-      })
-      .catch(() => {
-        Alert.alert('Fail', 'Try to load again');
-      });
-    // let promises = [];
-    // designs.forEach((design) => {
-    //   promises.push(BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, design));
-    // });
-    // // BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, designs[0])
-    // Promise.all(promises)
-    //   .then(
-    //     () => Alert.alert('Success', 'One designs have been loaded on the glass!'),
-    //     () => Alert.alert('Fail', 'Try to load again!')
-    //   );
+    //       })
+    //       .catch(() => {
+    //         Alert.alert('Fail', 'Try to load again');
+    //       });
+    //     }, 1000);
+    //   })
+    //   .catch(() => {
+    //     Alert.alert('Fail', 'Try to load again');
+    //   });
+    
   }
   
+  loadDesign(device, design, callback){
+    const DELAY = 300;
+    return () => {
+      // new Promise((resolve, reject) => {
+      //   setTimeout(() => {
+      //     resolve();
+      //   }, 1000)
+      // })
+      BleManager.write(device.id, SERVICE_UUID, CHARACTERISTIC_UUID, design)
+        .then(() => {
+          const { loadedDesigns } = this.state;
+          const { designsDataForLoading:designs } = this.props;
+
+          Alert.alert('Success', `Loaded ${loadedDesigns} of ${designs.length}`);
+          this.setState({
+            loadedDesigns: loadedDesigns + 1
+          });
+          setTimeout(() => {
+            if (callback)
+              callback();
+          }, DELAY);
+        })
+        .catch(() => {
+          Alert.alert('Fail', 'Try to load again');
+        });
+    }
+  }
 
   onScanButtonPress(){
     this.handleScan();
+    // this.writeDesignsData(null);
     // Alert.alert(this.props.data);
     // this.onDeviceItemPress();
   }
@@ -225,15 +260,6 @@ export default class BluetoothConnectionModal extends Component{
                   Close
                 </Button>
               </View>
-              <Text style = { [styles.description, { fontSize: 15 }] }>
-                { `Automatically data:\n${ dataForAutomaticallySending } ` }
-              </Text>
-              <Text style = { [styles.description, { fontSize: 15 }] }>
-                { `Manually data:\n${ dataForManuallySending } ` }
-              </Text>
-              <Text style = { [styles.description, { fontSize: 15 }] }>
-                { `Designs for loading:\n${ JSON.stringify(designsDataForLoading) } ` }
-              </Text>
             </View>
           </View>
         </Modal>
@@ -246,8 +272,8 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,.7)',
-    // justifyContent: 'center',
-    // alignItems: 'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   content: {
     width: 400,
@@ -295,3 +321,13 @@ const styles = StyleSheet.create({
     fontSize: 17
   }
 });
+
+// <Text style = { [styles.description, { fontSize: 15 }] }>
+//   { `Automatically data:\n${ dataForAutomaticallySending } ` }
+// </Text>
+// <Text style = { [styles.description, { fontSize: 15 }] }>
+//   { `Manually data:\n${ dataForManuallySending } ` }
+// </Text>
+// <Text style = { [styles.description, { fontSize: 15 }] }>
+//    { `Designs for loading:\n${ JSON.stringify(designsDataForLoading) } ` }
+// </Text>

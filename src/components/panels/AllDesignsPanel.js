@@ -3,9 +3,11 @@ import {
   View,
   Text,
   TouchableHighlight,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import config from '../../config/DesignConfig';
+import { RECYCLING_BIN, CLOSE_ICON, CONFIRM_ICON } from '../../config/ApplicationConfig';
 import styles from '../../style/DesignPageStyle';
 
 export default class AllDesignsPanel extends Component {
@@ -67,20 +69,20 @@ export default class AllDesignsPanel extends Component {
     return (
       <View style={styles.panel}>
         <View style={[styles.panelHeader, {flexDirection: 'row', justifyContent: 'space-between'}]}>
-          <TouchableHighlight style={styles.buttonRectangle}
+          <TouchableHighlight style={[styles.buttonRectangle, { justifyContent: 'center', alignItems: 'center'}]}
             onPress = { onDesignItemSelect }
           >
-            <Text style={styles.buttonRectangleText}>&#10003;</Text>
+            <Image source = { CONFIRM_ICON }/>
           </TouchableHighlight>
-          <TouchableHighlight style={styles.buttonRectangle}
+          <TouchableHighlight style={[styles.buttonRectangle, { justifyContent: 'center', alignItems: 'center'}]}
             onPress = { onClose }
           >
-            <Text style={styles.buttonRectangleText}>&or;</Text>
+            <Image source = { CLOSE_ICON }/>
           </TouchableHighlight>
-          <TouchableHighlight style={styles.buttonRectangle}
+          <TouchableHighlight style={[styles.buttonRectangle, { justifyContent: 'center', alignItems: 'center'}]}
             onPress = { this.deleteDesign.bind(this) }
           >
-            <Text style={styles.buttonRectangleText}>&#10005;</Text>
+            <Image source = { RECYCLING_BIN }/>
           </TouchableHighlight>
         </View>
         <View style={styles.panelBody}>

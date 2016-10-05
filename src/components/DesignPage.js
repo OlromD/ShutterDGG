@@ -134,6 +134,7 @@ export default class DesignPage extends Component {
       showSelectedDesignsPanel: false,
       showAllDesignsPanel: false,
       sendingDataToDeviceModalVisible: false,
+      // sendingDataToDeviceModalVisible: true,
       bluetoothModalVisibility : false,
       bluetoothDeviceAddress : null,
       allDesigns: [],
@@ -461,15 +462,19 @@ export default class DesignPage extends Component {
           ANIMATION_TYPE_OFFSET = 1;
     let animationType = config.movingSequence.indexOf(design.animationType) + ANIMATION_TYPE_OFFSET,
         time = config.timeSequence.indexOf(design.time) + TIME_OFFSET,
-        repetitionNumber = config.repetitionCycle.indexOf(design.repetitionNumber);
-    const INDEX_OFFSET = 1,
-          indexHEX = (index + INDEX_OFFSET).toString(16);     
+        repetitionNumber = config.repetitionCycle.indexOf(design.repetitionNumber);              
 
     // return `${hIndicators}${vIndicators}${animationType}${time}${repetitionNumber}`;
-    return `${hIndicators}${vIndicators}${controlByte}${index !== -1?indexHEX: ''}`;
+    return `${hIndicators}${vIndicators}${controlByte}${this.indexAdapter(index)}`;
 
   }
-
+  indexAdapter(index){
+    if (index === -1)
+      return '';
+    const INDEX_OFFSET = 1,
+          RADIX = 16;
+    return ((index > 7? index + 1: index) + INDEX_OFFSET).toString(RADIX);
+  }
   // adapter
   encodeIndicators(indicators, bitPortion, radix){
     let result = '';
